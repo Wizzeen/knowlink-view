@@ -60,25 +60,25 @@ knowlink-view/
 │   │                                           · 消费方：background / sidepanel / network
 │   │
 │   ├── 🌌 星系可视化引擎
-│   │   ├── galaxy-layout.js   🆕   694 行   图计算与布局引擎
-│   │   │                                        · buildGalaxyGraph     图构建
+│   │   ├── knowlink-layout.js   🆕   694 行   图计算与布局引擎
+│   │   │                                        · buildKnowlinkGraph     图构建
 │   │   │                                        · detectGalaxies       BFS 星系检测
-│   │   │                                        · computeGalaxyLayout  螺旋臂布局
-│   │   │                                        · runGalaxyForceSim    力导向模拟
+│   │   │                                        · computeKnowlinkLayout  螺旋臂布局
+│   │   │                                        · runKnowlinkForceSim    力导向模拟
 │   │   │                                        · addNodesToGraph      增量添加
 │   │   │                                        · relaxNewNodes        增量力松弛
 │   │   │                                        · findNodeAt           点击检测
 │   │   │                                        · computeStrength      边强度计算
-│   │   ├── galaxy-renderer.js 🆕   615 行   Canvas 2D 渲染管线
+│   │   ├── knowlink-renderer.js 🆕   615 行   Canvas 2D 渲染管线
 │   │   │                                        · renderStarfield      深空星场
 │   │   │                                        · renderNebulae        星系星云
-│   │   │                                        · renderGalaxyDust     中心微尘
+│   │   │                                        · renderKnowlinkDust     中心微尘
 │   │   │                                        · renderOrbitRings     行星轨道
-│   │   │                                        · renderGalaxyEdges    连线渲染
-│   │   │                                        · renderGalaxyNodes    恒星节点
+│   │   │                                        · renderKnowlinkEdges    连线渲染
+│   │   │                                        · renderKnowlinkNodes    恒星节点
 │   │   │                                        · renderEntryAnimations 超新星/虫洞动画
-│   │   │                                        · renderGalaxy          主渲染入口
-│   │   └── galaxy-engine.js   🔧   278 行   KnowLinkAI API 瘦 facade（原 1575 行）
+│   │   │                                        · renderKnowlink          主渲染入口
+│   │   └── knowlink-engine.js   🔧   278 行   KnowLinkAI API 瘦 facade（原 1575 行）
 │   │                                           · AI 连线增删
 │   │                                           · 密度控制（阈值/上限）
 │   │                                           · 与 AIWormhole 持久化同步
@@ -129,9 +129,9 @@ ai-wormhole.js 1309 行 God 模块         → ai-wormhole.js     609 行  编�
 15+ 处 chrome.storage 直接访问          → kb-store.js         426 行  🆕
   background / sidepanel / network
 
-galaxy-engine.js 1575 行 混合           → galaxy-layout.js    694 行  🆕
-  图计算 + Canvas 渲染紧耦合               galaxy-renderer.js  615 行  🆕
-                                          galaxy-engine.js    278 行  瘦 facade
+knowlink-engine.js 1575 行 混合           → knowlink-layout.js    694 行  🆕
+  图计算 + Canvas 渲染紧耦合               knowlink-renderer.js  615 行  🆕
+                                          knowlink-engine.js    278 行  瘦 facade
 
 ❌ wormhole-ui.js 评估后跳过
    侧边栏虫洞（工作流）与全屏虫洞（抽屉）功能不同，非真正重复
@@ -150,7 +150,7 @@ galaxy-engine.js 1575 行 混合           → galaxy-layout.js    694 行  🆕
           │                │                    │
           ▼                ▼                    ▼
    ┌──────────────┐ ┌──────────────┐   ┌────────────────┐
-   │ nlp-engine.js│ │galaxy-layout │   │   kb-store.js  │
+   │ nlp-engine.js│ │knowlink-layout │   │   kb-store.js  │
    │  self.NLP    │ │  .js         │   │  self.KBStore   │
    │              │ │ graphNodes[] │   │                │
    │ TF-IDF       │ │ graphEdges[] │   │ KBS / Points   │
@@ -160,7 +160,7 @@ galaxy-engine.js 1575 行 混合           → galaxy-layout.js    694 行  🆕
        │   │               │                  │
        ▼   ▼               ▼                  │
    ┌──────┐┌────────┐┌──────────────┐         │
-   │ai-   ││ai-dedup││galaxy-       │         │
+   │ai-   ││ai-dedup││knowlink-       │         │
    │worker││.js     ││renderer.js   │         │
    │.js   ││        ││              │         │
    │      ││语义去重 ││ Canvas 2D    │         │
@@ -217,7 +217,7 @@ js/core/utils.js → lib/pdf.min.js → js/core/nlp-engine.js → js/core/cloud-
 ```
 js/core/utils.js → lib/pdf.min.js → js/core/nlp-engine.js → js/core/cloud-adapter.js
 → js/core/ai-store.js → js/core/ai-edges.js → js/core/kb-store.js
-→ js/core/galaxy-layout.js → js/core/galaxy-renderer.js → js/core/galaxy-engine.js
+→ js/core/knowlink-layout.js → js/core/knowlink-renderer.js → js/core/knowlink-engine.js
 → js/core/ai-config.js → js/core/ai-wormhole.js → js/views/network.js
 ```
 
@@ -245,7 +245,7 @@ importScripts('nlp-engine.js')   // 同目录 js/core/
 | `window.CloudAdapter` | cloud-adapter.js | Page only |
 | `window.AIStore` | ai-store.js | Page only |
 | `window.AIEdges` | ai-edges.js | Page only |
-| `window.KnowLinkAI` | galaxy-engine.js | Page only |
+| `window.KnowLinkAI` | knowlink-engine.js | Page only |
 
 ---
 

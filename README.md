@@ -76,9 +76,9 @@ knowlink-view/
 │   │   ├── ai-wormhole.js   AI 分析编排器（PDF 分析 / 关联发现）
 │   │   ├── ai-config.js     AI 配置（gitignore，不入库）
 │   │   ├── kb-store.js      统一知识库数据层（唯一数据源）
-│   │   ├── galaxy-layout.js 图计算与布局引擎
-│   │   ├── galaxy-renderer.js Canvas 2D 渲染管线
-│   │   ├── galaxy-engine.js KnowLinkAI API 瘦 facade
+│   │   ├── knowlink-layout.js 图计算与布局引擎
+│   │   ├── knowlink-renderer.js Canvas 2D 渲染管线
+│   │   ├── knowlink-engine.js KnowLinkAI API 瘦 facade
 │   │   ├── i18n.js          国际化
 │   │   └── utils.js         共享工具
 │   └── views/               视图逻辑

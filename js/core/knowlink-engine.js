@@ -1,9 +1,9 @@
 // ====================================================================
-//  KnowLink 知识星系 — 星系引擎入口 (galaxy-engine.js)
+//  KnowLink 知识星系 — 星系引擎入口 (knowlink-engine.js)
 //  由 sidepanel.js 和 network.html 共同加载
 //  职责：AI 连线管理 API (window.KnowLinkAI)、模块编排
-//  图计算/布局 → galaxy-layout.js
-//  Canvas 2D 渲染  → galaxy-renderer.js
+//  图计算/布局 → knowlink-layout.js
+//  Canvas 2D 渲染  → knowlink-renderer.js
 // ====================================================================
 
 // ====================================================================

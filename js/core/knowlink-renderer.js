@@ -1,14 +1,14 @@
 // ====================================================================
-//  KnowLink 知识星系 — Canvas 2D 渲染管线 (galaxy-renderer.js)
+//  KnowLink 知识星系 — Canvas 2D 渲染管线 (knowlink-renderer.js)
 //  负责：背景、节点、边、标签渲染、入场动画、主渲染循环
-//  读取 graphNodes/graphEdges/galaxies 全局变量（由 galaxy-layout.js 写入）
+//  读取 graphNodes/graphEdges/galaxies 全局变量（由 knowlink-layout.js 写入）
 //  支持主题：obsidian（默认，纯色简洁）/ space（深空星系）
 // ====================================================================
 
 // ====================================================================
 //  主题系统
 // ====================================================================
-var GALAXY_THEMES = {
+var KNOWLINK_THEMES = {
   // Obsidian 纯色简洁风格（默认）
   obsidian: {
     name: 'Obsidian 简洁',
@@ -69,19 +69,19 @@ var GALAXY_THEMES = {
 };
 
 // 当前主题（默认 obsidian）
-var _galaxyTheme = 'obsidian';
+var _knowlinkTheme = 'obsidian';
 
-function getGalaxyTheme() {
-  return _galaxyTheme;
+function getKnowlinkTheme() {
+  return _knowlinkTheme;
 }
 
-function setGalaxyTheme(name) {
-  if (GALAXY_THEMES[name]) _galaxyTheme = name;
-  return _galaxyTheme;
+function setKnowlinkTheme(name) {
+  if (KNOWLINK_THEMES[name]) _knowlinkTheme = name;
+  return _knowlinkTheme;
 }
 
 function theme() {
-  return GALAXY_THEMES[_galaxyTheme] || GALAXY_THEMES.obsidian;
+  return KNOWLINK_THEMES[_knowlinkTheme] || KNOWLINK_THEMES.obsidian;
 }
 
 // ---- 深空背景色（space 主题用） ----
@@ -245,18 +245,18 @@ function renderNebulae(ctx, vt) {
 }
 
 // ---- 星系中心微尘 ----
-var galaxyDustParticles = [];
-var galaxyDustGeneratedFor = ''; // 跟踪是为哪些星系生成的
+var knowlinkDustParticles = [];
+var knowlinkDustGeneratedFor = ''; // 跟踪是为哪些星系生成的
 
-function initGalaxyDust() {
-  galaxyDustParticles = [];
-  galaxyDustGeneratedFor = galaxies.map(function(g) { return g.id + ':' + g.nodeIds.length; }).join(',');
+function initKnowlinkDust() {
+  knowlinkDustParticles = [];
+  knowlinkDustGeneratedFor = galaxies.map(function(g) { return g.id + ':' + g.nodeIds.length; }).join(',');
   galaxies.forEach(function(gal) {
     var count = Math.min((gal.nodeIds || []).length * 6, 50);
     for (var i = 0; i < count; i++) {
       var angle = Math.random() * Math.PI * 2;
       var dist = 30 + Math.random() * 180;
-      galaxyDustParticles.push({
+      knowlinkDustParticles.push({
         gx: gal.centerX + Math.cos(angle) * dist,
         gy: gal.centerY + Math.sin(angle) * dist,
         r: Math.random() * 0.8 + 0.2,
@@ -273,16 +273,16 @@ function initGalaxyDust() {
   });
 }
 
-function renderGalaxyDust(ctx, vt, time) {
+function renderKnowlinkDust(ctx, vt, time) {
   if (!theme().showDust) return;
   // 检查是否需要重新生成
   var currentSig = galaxies.map(function(g) { return g.id + ':' + g.nodeIds.length; }).join(',');
-  if (galaxyDustGeneratedFor !== currentSig) {
-    initGalaxyDust();
+  if (knowlinkDustGeneratedFor !== currentSig) {
+    initKnowlinkDust();
   }
 
-  if (!galaxyDustParticles.length) return;
-  galaxyDustParticles.forEach(function(d) {
+  if (!knowlinkDustParticles.length) return;
+  knowlinkDustParticles.forEach(function(d) {
     d.phase += d.speed;
     d.alpha += Math.sin(d.phase) * 0.04;
     d.alpha = Math.max(0.03, Math.min(0.35, d.alpha));
@@ -297,7 +297,7 @@ function renderGalaxyDust(ctx, vt, time) {
 }
 
 // ---- 边渲染 ----
-function renderGalaxyEdges(ctx, vt, allEdges, hoveredNode, focusedNode, filterText, time) {
+function renderKnowlinkEdges(ctx, vt, allEdges, hoveredNode, focusedNode, filterText, time) {
   var ft = filterText ? filterText.toLowerCase().trim() : '';
 
   allEdges.forEach(function(e) {
@@ -374,7 +374,7 @@ function renderGalaxyEdges(ctx, vt, allEdges, hoveredNode, focusedNode, filterTe
 }
 
 // ---- 节点渲染 ----
-function renderGalaxyNodes(ctx, vt, hoveredNode, focusedNode, selectedNode, filterText, time) {
+function renderKnowlinkNodes(ctx, vt, hoveredNode, focusedNode, selectedNode, filterText, time) {
   var ft = filterText ? filterText.toLowerCase().trim() : '';
 
   graphNodes.forEach(function(nd, i) {
@@ -448,7 +448,7 @@ function renderGalaxyNodes(ctx, vt, hoveredNode, focusedNode, selectedNode, filt
     }
 
     // ==================== 小球本体（obsidian 黑点 / space 渐变） ====================
-    if (_galaxyTheme === 'obsidian') {
+    if (_knowlinkTheme === 'obsidian') {
       // Obsidian 关系图谱风格：灰色圆点（缩小一倍，无边框；聚焦/选中变黑）
       var dotR = r * 0.5;
       ctx.beginPath();
@@ -626,7 +626,7 @@ function renderEntryAnimations(ctx, allEdges, time) {
 // ====================================================================
 //  主渲染入口
 // ====================================================================
-function renderGalaxy(ctx, vt, W, H, opt) {
+function renderKnowlink(ctx, vt, W, H, opt) {
   opt = opt || {};
   var hoveredNode  = opt.hoveredNode;
   var focusedNode  = opt.focusedNode;
@@ -661,17 +661,17 @@ function renderGalaxy(ctx, vt, W, H, opt) {
   renderNebulae(ctx, vt);
 
   // ---- Layer 2.5: 星系中心微尘 ----
-  renderGalaxyDust(ctx, vt, time);
+  renderKnowlinkDust(ctx, vt, time);
 
   // ---- Layer 4: 边（连线） ----
   var allEdges = graphEdges.concat(aiEdges);
-  renderGalaxyEdges(ctx, vt, allEdges, hoveredNode, focusedNode, filterText, time);
+  renderKnowlinkEdges(ctx, vt, allEdges, hoveredNode, focusedNode, filterText, time);
 
   // ---- Layer 5: 星座连线（跨星系的语义关联） ----
-  // (已在 renderGalaxyEdges 中通过 reason 区分渲染)
+  // (已在 renderKnowlinkEdges 中通过 reason 区分渲染)
 
   // ---- Layer 6: 恒星节点 ----
-  renderGalaxyNodes(ctx, vt, hoveredNode, focusedNode, selectedNode, filterText, time);
+  renderKnowlinkNodes(ctx, vt, hoveredNode, focusedNode, selectedNode, filterText, time);
 
   // ---- Layer 6.5: 入场动画（超新星 + 虫洞脉冲） ----
   renderEntryAnimations(ctx, allEdges, time);

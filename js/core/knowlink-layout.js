@@ -1,8 +1,8 @@
 // ====================================================================
-//  KnowLink 知识星系 — 图计算与布局引擎 (galaxy-layout.js)
+//  KnowLink 知识星系 — 图计算与布局引擎 (knowlink-layout.js)
 //  负责：图构建、星系检测、力模拟、布局计算、坐标系统
 //  读取 graphNodes/graphEdges 全局变量，写入位置数据
-//  由 galaxy-engine.js 和 galaxy-renderer.js 共享
+//  由 knowlink-engine.js 和 knowlink-renderer.js 共享
 // ====================================================================
 
 // ---- 确定性随机（seeded RNG）----
@@ -48,7 +48,7 @@ function resolveNodeIndex(edgeEndpoint) {
     var idx = _nodeIdToIndex[edgeEndpoint];
     if (idx !== undefined) return idx;
     // 修复: 查不到时打警告，帮助排查稳定 ID 失效问题
-    console.warn('[Galaxy] resolveNodeIndex: 未找到稳定 ID "' + edgeEndpoint + '" 对应的节点下标');
+    console.warn('[Knowlink] resolveNodeIndex: 未找到稳定 ID "' + edgeEndpoint + '" 对应的节点下标');
     return -1;
   }
   return -1;
@@ -193,10 +193,10 @@ function detectGalaxies(graphNodes, graphEdges) {
   galaxies = clusters.map(function(comp, gi) {
     var color = DOMAIN_COLORS[gi % DOMAIN_COLORS.length];
     return {
-      id: 'galaxy-' + gi,
+      id: 'knowlink-' + gi,
       name: '知识星系 ' + (gi + 1),
       color: color,
-      armAngle: seededRandom(hashString('galaxy-' + gi))() * Math.PI * 2,
+      armAngle: seededRandom(hashString('knowlink-' + gi))() * Math.PI * 2,
       nodeIds: comp
     };
   });
@@ -204,7 +204,7 @@ function detectGalaxies(graphNodes, graphEdges) {
   // 单节点分配到最近星系（基于关键词/来源相似度）
   singletons.forEach(function(sc) {
     var nodeId = sc[0];
-    var bestGalaxy = galaxies[0];
+    var bestKnowlink = galaxies[0];
     var bestScore = -1;
     galaxies.forEach(function(gal) {
       var score = 0;
@@ -215,10 +215,10 @@ function detectGalaxies(graphNodes, graphEdges) {
           }
         });
       });
-      if (score > bestScore) { bestScore = score; bestGalaxy = gal; }
+      if (score > bestScore) { bestScore = score; bestKnowlink = gal; }
     });
-    if (bestGalaxy && bestScore > 0) {
-      bestGalaxy.nodeIds.push(nodeId);
+    if (bestKnowlink && bestScore > 0) {
+      bestKnowlink.nodeIds.push(nodeId);
     } else if (galaxies.length > 0) {
       galaxies[0].nodeIds.push(nodeId);
     }
@@ -236,23 +236,23 @@ function detectGalaxies(graphNodes, graphEdges) {
     }
   });
 
-  // 回写节点的 galaxy 字段
+  // 回写节点的 knowlink 字段
   galaxies.forEach(function(gal) {
     gal.nodeIds.forEach(function(id) {
-      graphNodes[id].galaxy = gal.id;
+      graphNodes[id].knowlink = gal.id;
     });
   });
 
-  console.log('[Galaxy] 检测到 ' + galaxies.length + ' 个星系，共 ' + n + ' 个节点');
+  console.log('[Knowlink] 检测到 ' + galaxies.length + ' 个星系，共 ' + n + ' 个节点');
   galaxies.forEach(function(g) {
-    console.log('[Galaxy]   ' + g.name + ': ' + g.nodeIds.length + ' 颗恒星');
+    console.log('[Knowlink]   ' + g.name + ': ' + g.nodeIds.length + ' 颗恒星');
   });
 }
 
 // ====================================================================
 //  星系布局引擎 — 螺旋臂 + 行星轨道
 // ====================================================================
-function computeGalaxyLayout(graphNodes, graphEdges, containerW, containerH) {
+function computeKnowlinkLayout(graphNodes, graphEdges, containerW, containerH) {
   var W = containerW || 800, H = containerH || 600;
   if (W < 10) W = 800; if (H < 10) H = 600;
 
@@ -352,10 +352,10 @@ function computeGalaxyLayout(graphNodes, graphEdges, containerW, containerH) {
   });
 
   // 运行力导向松弛迭代
-  runGalaxyForceSimulation(graphNodes, graphEdges, W, H);
+  runKnowlinkForceSimulation(graphNodes, graphEdges, W, H);
 }
 
-function runGalaxyForceSimulation(graphNodes, graphEdges, W, H) {
+function runKnowlinkForceSimulation(graphNodes, graphEdges, W, H) {
   var n = graphNodes.length;
   if (!n) return;
   var ITER = 40, DAMP = 0.8;
@@ -396,8 +396,8 @@ function runGalaxyForceSimulation(graphNodes, graphEdges, W, H) {
     // 星系中心引力 + 星系间排斥
     graphNodes.forEach(function(nd, i) {
       // 拉向所属星系中心
-      if (nd.galaxy) {
-        var gal = galaxies.find(function(g) { return g.id === nd.galaxy; });
+      if (nd.knowlink) {
+        var gal = galaxies.find(function(g) { return g.id === nd.knowlink; });
         if (gal) {
           forces[i].fx += (gal.centerX - nd.x) * 0.003;
           forces[i].fy += (gal.centerY - nd.y) * 0.003;
@@ -405,7 +405,7 @@ function runGalaxyForceSimulation(graphNodes, graphEdges, W, H) {
       }
       // 星系间排斥：其他星系中心推开本星系节点（减弱，配合中心压缩）
       galaxies.forEach(function(other) {
-        if (other.id === nd.galaxy) return;
+        if (other.id === nd.knowlink) return;
         var dx = nd.x - other.centerX, dy = nd.y - other.centerY;
         var d = Math.sqrt(dx*dx + dy*dy) || 1;
         var f = 400 / (d * d);  // 星系间排斥力（减弱）
@@ -470,7 +470,7 @@ function addNodesToGraph(newPoints, containerW, containerH) {
       x: 0, y: 0,
       radius: 3 + Math.min(label.length * 0.3, 4),
       matchesFilter: true,
-      galaxy: null,
+      knowlink: null,
       importance: 1,
       orbitParent: null,
       orbitRadius: 0,
@@ -573,7 +573,7 @@ function addNodesToGraph(newPoints, containerW, containerH) {
     }
   });
 
-  console.log('[Galaxy] 增量添加: +' + newCount + ' 节点, +' + newEdges.length + ' 条边 (总计 ' + graphNodes.length + ' 节点, ' + graphEdges.length + ' 边)');
+  console.log('[Knowlink] 增量添加: +' + newCount + ' 节点, +' + newEdges.length + ' 条边 (总计 ' + graphNodes.length + ' 节点, ' + graphEdges.length + ' 边)');
 
   return newIndices;
 }
@@ -643,8 +643,8 @@ function relaxNewNodes(newNodeIndices, iterations) {
     // 星系中心引力（仅对参与节点）
     partList.forEach(function(i) {
       var nd = graphNodes[i];
-      if (nd.galaxy) {
-        var gal = galaxies.find(function(g) { return g.id === nd.galaxy; });
+      if (nd.knowlink) {
+        var gal = galaxies.find(function(g) { return g.id === nd.knowlink; });
         if (gal) {
           forces[i].fx += (gal.centerX - nd.x) * 0.003;
           forces[i].fy += (gal.centerY - nd.y) * 0.003;
@@ -655,13 +655,13 @@ function relaxNewNodes(newNodeIndices, iterations) {
     });
   }
 
-  console.log('[Galaxy] 增量力模拟完成: ' + partList.length + ' 个参与节点, ' + ITER + ' 次迭代');
+  console.log('[Knowlink] 增量力模拟完成: ' + partList.length + ' 个参与节点, ' + ITER + ' 次迭代');
 }
 
 // ====================================================================
 //  图构建
 // ====================================================================
-function buildGalaxyGraph(knowledgePoints, filterText) {
+function buildKnowlinkGraph(knowledgePoints, filterText) {
   var n = knowledgePoints.length;
   if (!n) { graphNodes = []; graphEdges = []; return; }
 
@@ -694,7 +694,7 @@ function buildGalaxyGraph(knowledgePoints, filterText) {
       x: 0, y: 0,
       radius: 3 + Math.min(label.length * 0.3, 4),
       matchesFilter: true,
-      galaxy: null,
+      knowlink: null,
       importance: 1,
       orbitParent: null,
       orbitRadius: 0,
@@ -743,7 +743,7 @@ function buildGalaxyGraph(knowledgePoints, filterText) {
     }
   }
 
-  console.log('[Galaxy] 构建图: ' + n + ' 节点, ' + graphEdges.length + ' 条边');
+  console.log('[Knowlink] 构建图: ' + n + ' 节点, ' + graphEdges.length + ' 条边');
 
   // 自动检测星系
   detectGalaxies(graphNodes, graphEdges);

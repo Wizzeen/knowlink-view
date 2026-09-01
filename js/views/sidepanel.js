@@ -48,7 +48,7 @@ var _currentTheme = 'obsidian';
 function applyTheme(name) {
   _currentTheme = name;
   document.documentElement.setAttribute('data-theme', name);
-  if (typeof setGalaxyTheme === 'function') setGalaxyTheme(name);
+  if (typeof setKnowlinkTheme === 'function') setKnowlinkTheme(name);
   try {
     chrome.storage.local.set({ knowlinkTheme: name });
   } catch (e) {}

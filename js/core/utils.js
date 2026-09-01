@@ -1,6 +1,6 @@
 // ====================================================================
 //  KnowLink 知识星系 — 共享工具函数 (utils.js)
-//  供 sidepanel.js、galaxy-engine.js、network.js 共用
+//  供 sidepanel.js、knowlink-engine.js、network.js 共用
 // ====================================================================
 
 var SOURCE_COLORS = [

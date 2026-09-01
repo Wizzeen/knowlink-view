@@ -37,7 +37,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["network.html", "pdf-viewer.html", "css/network.css", "css/pdf-viewer.css", "js/views/network.js", "js/views/pdf-viewer.js", "js/core/galaxy-engine.js", "js/core/galaxy-layout.js", "js/core/galaxy-renderer.js", "js/core/nlp-engine.js", "js/core/cloud-adapter.js", "js/core/ai-store.js", "js/core/ai-edges.js", "js/core/kb-store.js", "js/core/ai-config.js", "js/core/ai-wormhole.js", "js/core/ai-dedup.js", "js/core/utils.js"],
+      "resources": ["network.html", "pdf-viewer.html", "css/network.css", "css/pdf-viewer.css", "js/views/network.js", "js/views/pdf-viewer.js", "js/core/knowlink-engine.js", "js/core/knowlink-layout.js", "js/core/knowlink-renderer.js", "js/core/nlp-engine.js", "js/core/cloud-adapter.js", "js/core/ai-store.js", "js/core/ai-edges.js", "js/core/kb-store.js", "js/core/ai-config.js", "js/core/ai-wormhole.js", "js/core/ai-dedup.js", "js/core/utils.js"],
       "matches": ["<all_urls>"],
       "use_dynamic_url": true
     }

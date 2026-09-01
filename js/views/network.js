@@ -31,7 +31,7 @@ var _currentTheme = 'obsidian';
 function applyTheme(name) {
   _currentTheme = name;
   document.documentElement.setAttribute('data-theme', name);
-  if (typeof setGalaxyTheme === 'function') setGalaxyTheme(name);
+  if (typeof setKnowlinkTheme === 'function') setKnowlinkTheme(name);
   renderGraph();
   try {
     chrome.storage.local.set({ knowlinkTheme: name });
@@ -53,7 +53,7 @@ try {
 } catch (e) {}
 
 // ---- DOM ----
-var canvas       = document.getElementById('galaxy-canvas');
+var canvas       = document.getElementById('knowlink-canvas');
 var ctx          = canvas.getContext('2d');
 var tooltip      = document.getElementById('tooltip');
 var searchInput  = document.getElementById('search-input');
@@ -62,9 +62,9 @@ var detailPanel  = document.getElementById('detail-panel');
 
 // 面包屑
 var crumbAll    = document.getElementById('crumb-all');
-var crumbGalaxy = document.getElementById('crumb-galaxy');
+var crumbKnowlink = document.getElementById('crumb-knowlink');
 var crumbStar   = document.getElementById('crumb-star');
-var sepGalaxy   = document.getElementById('sep-galaxy');
+var sepKnowlink   = document.getElementById('sep-knowlink');
 var sepStar     = document.getElementById('sep-star');
 
 // ---- 状态 ----
@@ -121,26 +121,26 @@ function updateBreadcrumb() {
   if (focusedNode !== null && focusedNode !== undefined) {
     var nd = graphNodes[focusedNode];
     var galName = '';
-    if (nd && nd.galaxy) {
-      var gal = galaxies.find(function(g) { return g.id === nd.galaxy; });
+    if (nd && nd.knowlink) {
+      var gal = galaxies.find(function(g) { return g.id === nd.knowlink; });
       if (gal) galName = gal.name;
     }
 
-    crumbGalaxy.style.display = '';
-    crumbGalaxy.textContent = window.I18n ? window.I18n.t('breadcrumb.galaxy', {name: galName || ''}) : (galName || '星系');
-    sepGalaxy.style.display = '';
+    crumbKnowlink.style.display = '';
+    crumbKnowlink.textContent = window.I18n ? window.I18n.t('breadcrumb.knowlink', {name: galName || ''}) : (galName || '星系');
+    sepKnowlink.style.display = '';
 
     crumbStar.style.display = '';
     crumbStar.textContent = nd ? (window.I18n ? window.I18n.t('breadcrumb.star', {label: nd.label}) : nd.label) : '';
     sepStar.style.display = '';
 
     crumbAll.classList.remove('current');
-    crumbGalaxy.classList.remove('current');
+    crumbKnowlink.classList.remove('current');
     crumbStar.classList.add('current');
   } else {
-    crumbGalaxy.style.display = 'none';
+    crumbKnowlink.style.display = 'none';
     crumbStar.style.display = 'none';
-    sepGalaxy.style.display = 'none';
+    sepKnowlink.style.display = 'none';
     sepStar.style.display = 'none';
     crumbAll.classList.add('current');
   }
@@ -154,11 +154,11 @@ crumbAll.addEventListener('click', function() {
   renderGraph();
 });
 
-crumbGalaxy.addEventListener('click', function() {
+crumbKnowlink.addEventListener('click', function() {
   if (focusedNode !== null && graphNodes[focusedNode]) {
     var nd = graphNodes[focusedNode];
-    if (nd.galaxy) {
-      var gal = galaxies.find(function(g) { return g.id === nd.galaxy; });
+    if (nd.knowlink) {
+      var gal = galaxies.find(function(g) { return g.id === nd.knowlink; });
       if (gal) {
         var wrap = document.getElementById('canvas-wrap');
         var rect = wrap.getBoundingClientRect();
@@ -182,11 +182,11 @@ function loadData() {
     knowledgePoints = self.KBStore.getPoints();
     var activeKB = self.KBStore.getActiveKB();
     activeKBName = activeKB ? activeKB.name : '知识库';
-    console.log('[Galaxy Network] 加载知识库「' + activeKBName + '」: ' + knowledgePoints.length + ' 条');
+    console.log('[Knowlink Network] 加载知识库「' + activeKBName + '」: ' + knowledgePoints.length + ' 条');
     buildGraph();
     resizeCanvas();
     updateStats();
-  } catch(e) { console.error('[Galaxy Network] loadData:', e); }
+  } catch(e) { console.error('[Knowlink Network] loadData:', e); }
 }
 
 function updateStats() {
@@ -207,8 +207,8 @@ function buildGraph() {
   var wrap = document.getElementById('canvas-wrap');
   var rect = wrap.getBoundingClientRect();
   var W = rect.width || 1000, H = rect.height || 700;
-  buildGalaxyGraph(knowledgePoints, filterText);
-  computeGalaxyLayout(graphNodes, graphEdges, W, H);
+  buildKnowlinkGraph(knowledgePoints, filterText);
+  computeKnowlinkLayout(graphNodes, graphEdges, W, H);
 }
 
 // ---- 渲染 ----
@@ -220,7 +220,7 @@ function renderGraph() {
 
   var aiEdges = window.KnowLinkAI ? window.KnowLinkAI._getAIEdges() : [];
 
-  renderGalaxy(ctx, viewTransform, W, H, {
+  renderKnowlink(ctx, viewTransform, W, H, {
     hoveredNode: hoveredNode,
     focusedNode: focusedNode,
     selectedNode: selectedNode,
@@ -245,15 +245,15 @@ function showDetail(idx) {
   var nodeStableId = nd.stableId || '';
   var aiConnCount = aiEdges.filter(function(e) { return e.from === nodeStableId || e.to === nodeStableId; }).length;
   var galName = '';
-  if (nd.galaxy) {
-    var gal = galaxies.find(function(g) { return g.id === nd.galaxy; });
+  if (nd.knowlink) {
+    var gal = galaxies.find(function(g) { return g.id === nd.knowlink; });
     if (gal) galName = gal.name;
   }
 
   document.getElementById('detail-text').textContent = nd.fullText;
   var I = window.I18n;
   document.getElementById('detail-stats').innerHTML =
-    (I ? I.t('detail.galaxy', {name: galName || I.t('detail.wanderer')}) : ('所属星系: ' + (galName || '流浪恒星'))) + '<br>' +
+    (I ? I.t('detail.knowlink', {name: galName || I.t('detail.wanderer')}) : ('所属星系: ' + (galName || '流浪恒星'))) + '<br>' +
     (I ? I.t('detail.connections', {count: connCount, ai: aiConnCount}) : ('关联节点: ' + connCount + ' 个（其中 ' + aiConnCount + ' 个 AI 连线）')) + '<br>' +
     (I ? I.t('detail.index', {idx: idx}) : ('索引: #' + idx));
 
@@ -348,7 +348,7 @@ canvas.addEventListener('mousemove', function(e) {
     var connCount = graphEdges.filter(function(e) { return e.from === hoveredNode || e.to === hoveredNode; }).length;
     tooltip.innerHTML = (nd.fullText.length > 60 ? nd.fullText.slice(0, 58) + '…' : nd.fullText)
       + '<span class="tt-narrative">' + (window.I18n ? window.I18n.t('tooltip.connections', {count: connCount}) : ('关联 ' + connCount + ' 个节点'))
-      + (nd.galaxy ? ' · ' + (nd.galaxy || '') : '')
+      + (nd.knowlink ? ' · ' + (nd.knowlink || '') : '')
       + '</span>';
     tooltip.style.opacity = '1';
   } else {
@@ -449,7 +449,7 @@ document.getElementById('btn-export').addEventListener('click', function() {
   var url = URL.createObjectURL(blob);
   var a = document.createElement('a');
   a.href = url;
-  a.download = 'knowlink-galaxy-' + activeKBName + '-' + new Date().toISOString().slice(0, 10) + '.json';
+  a.download = 'knowlink-knowlink-' + activeKBName + '-' + new Date().toISOString().slice(0, 10) + '.json';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
 });
@@ -492,11 +492,11 @@ if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage)
   }
   // 漏洞4: AI结果更新消息
   if (message.type === 'AI_RESULT_UPDATED') {
-    console.log('[Galaxy Network] 收到AI结果更新:', message.pdfUrl);
+    console.log('[Knowlink Network] 收到AI结果更新:', message.pdfUrl);
     loadAIResults();
   }
   if (message.type === 'AI_EDGES_UPDATED') {
-    console.log('[Galaxy Network] 收到AI连线更新, 共 ' + message.count + ' 条');
+    console.log('[Knowlink Network] 收到AI连线更新, 共 ' + message.count + ' 条');
     loadAIResults();
   }
   });
@@ -532,7 +532,7 @@ function incrementalRefresh(message) {
     return;
   }
 
-  console.log('[Galaxy Network] 增量刷新: +' + trulyNewPoints.length + ' 新知识点');
+  console.log('[Knowlink Network] 增量刷新: +' + trulyNewPoints.length + ' 新知识点');
 
   // 追加到 knowledgePoints
   for (var i = 0; i < trulyNewPoints.length; i++) {
@@ -989,7 +989,7 @@ self.KBStore.init().then(function() {
   startAnimLoop();
   initWormholeDrawer();
 }).catch(function(e) {
-  console.warn('[Galaxy Network] KBStore 初始化失败（非扩展环境），使用空数据:', e && e.message);
+  console.warn('[Knowlink Network] KBStore 初始化失败（非扩展环境），使用空数据:', e && e.message);
   knowledgePoints = [];
   buildGraph();
   resizeCanvas();
