@@ -94,7 +94,7 @@ var NEBULA_COLORS   = ['rgba(59,130,246,0.05)', 'rgba(139,92,246,0.05)', 'rgba(9
 // ====================================================================
 var starParticles = [];
 
-// 星体颜色光谱 (用于背景星的不同色温)
+// 节点颜色光谱 (用于背景星的不同色温)
 var STAR_SPECTRUM = [
   'rgba(255,255,255,__A__)',      // 纯白
   'rgba(200,215,255,__A__)',     // 蓝白
@@ -217,7 +217,7 @@ function shadeColor(hex, percent) {
 // ---- 星云渲染 ----
 function renderNebulae(ctx, vt) {
   if (!theme().showNebulae) return;
-  // 在每个星系中心渲染多层柔和光晕
+  // 在每个知识簇中心渲染多层柔和光晕
   galaxies.forEach(function(gal) {
     if (!gal.nodeIds || gal.nodeIds.length < 3) return;
     var cx = gal.centerX, cy = gal.centerY;
@@ -244,9 +244,9 @@ function renderNebulae(ctx, vt) {
   });
 }
 
-// ---- 星系中心微尘 ----
+// ---- 知识簇中心微尘 ----
 var knowlinkDustParticles = [];
-var knowlinkDustGeneratedFor = ''; // 跟踪是为哪些星系生成的
+var knowlinkDustGeneratedFor = ''; // 跟踪是为哪些知识簇生成的
 
 function initKnowlinkDust() {
   knowlinkDustParticles = [];
@@ -560,7 +560,7 @@ function renderEntryAnimations(ctx, allEdges, time) {
       var nd = graphNodes[anim.nodeIdx];
       if (!nd) return;
 
-      // 超新星爆发：光环从 3x 半径缩小到 0，alpha 从 0.9 → 0
+      // 入场爆发：光环从 3x 半径缩小到 0，alpha 从 0.9 → 0
       var ringR = nd.radius * 3 * (1 - t);
       var alpha = 0.9 * (1 - t);
 
@@ -589,7 +589,7 @@ function renderEntryAnimations(ctx, allEdges, time) {
       var toNd = graphNodes[anim.toIdx];
       if (!fromNd || !toNd) return;
 
-      // 虫洞脉冲：光点沿连线传播
+      // AI 关联脉冲：光点沿连线传播
       // 缓动：ease-in-out
       var easeT = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 
@@ -660,20 +660,20 @@ function renderKnowlink(ctx, vt, W, H, opt) {
   // ---- Layer 2: 星云光晕（密集知识区域） ----
   renderNebulae(ctx, vt);
 
-  // ---- Layer 2.5: 星系中心微尘 ----
+  // ---- Layer 2.5: 知识簇中心微尘 ----
   renderKnowlinkDust(ctx, vt, time);
 
   // ---- Layer 4: 边（连线） ----
   var allEdges = graphEdges.concat(aiEdges);
   renderKnowlinkEdges(ctx, vt, allEdges, hoveredNode, focusedNode, filterText, time);
 
-  // ---- Layer 5: 星座连线（跨星系的语义关联） ----
+  // ---- Layer 5: 关联连线（跨知识簇的语义关联） ----
   // (已在 renderKnowlinkEdges 中通过 reason 区分渲染)
 
-  // ---- Layer 6: 恒星节点 ----
+  // ---- Layer 6: 节点节点 ----
   renderKnowlinkNodes(ctx, vt, hoveredNode, focusedNode, selectedNode, filterText, time);
 
-  // ---- Layer 6.5: 入场动画（超新星 + 虫洞脉冲） ----
+  // ---- Layer 6.5: 入场动画（入场 + AI 关联脉冲） ----
   renderEntryAnimations(ctx, allEdges, time);
 
   ctx.restore();
@@ -683,6 +683,6 @@ function renderKnowlink(ctx, vt, W, H, opt) {
     ctx.fillStyle = theme().emptyText;
     ctx.font = '15px system-ui';
     ctx.textAlign = 'center';
-    ctx.fillText('知识宇宙中还没有节点，去收集一些知识点吧', W / 2, H / 2);
+    ctx.fillText('知识库中还没有节点，去收集一些知识点吧', W / 2, H / 2);
   }
 }

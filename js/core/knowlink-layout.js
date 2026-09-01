@@ -1,6 +1,6 @@
 // ====================================================================
 //  KnowLink 知识星系 — 图计算与布局引擎 (knowlink-layout.js)
-//  负责：图构建、星系检测、力模拟、布局计算、坐标系统
+//  负责：图构建、知识簇检测、力模拟、布局计算、坐标系统
 //  读取 graphNodes/graphEdges 全局变量，写入位置数据
 //  由 knowlink-engine.js 和 knowlink-renderer.js 共享
 // ====================================================================
@@ -36,7 +36,7 @@ var DOMAIN_COLORS = [
   '#f97316', // 橙 — 生活经验
 ];
 
-// ---- 全局星系数据 ----
+// ---- 全局知识簇数据 ----
 var galaxies = [];  // { id, name, centerX, centerY, color, armAngle, nodeIds }
 
 // ---- 节点 ID 查找表（稳定字符串 ID → 数组下标） ----
@@ -151,7 +151,7 @@ function getEdgeNarrative(reason, strength) {
 }
 
 // ====================================================================
-//  星系检测 — 基于连通分量的社区发现
+//  知识簇检测 — 基于连通分量的社区发现
 // ====================================================================
 function detectGalaxies(graphNodes, graphEdges) {
   var n = graphNodes.length;
@@ -185,11 +185,11 @@ function detectGalaxies(graphNodes, graphEdges) {
     components.push(comp);
   }
 
-  // 孤立的单节点合并到最近的星系
+  // 孤立的单节点合并到最近的知识簇
   var singletons = components.filter(function(c) { return c.length === 1; });
   var clusters   = components.filter(function(c) { return c.length > 1; });
 
-  // 给每个星系分配颜色
+  // 给每个知识簇分配颜色
   galaxies = clusters.map(function(comp, gi) {
     var color = DOMAIN_COLORS[gi % DOMAIN_COLORS.length];
     return {
@@ -201,7 +201,7 @@ function detectGalaxies(graphNodes, graphEdges) {
     };
   });
 
-  // 单节点分配到最近星系（基于关键词/来源相似度）
+  // 单节点分配到最近知识簇（基于关键词/来源相似度）
   singletons.forEach(function(sc) {
     var nodeId = sc[0];
     var bestKnowlink = galaxies[0];
@@ -224,9 +224,9 @@ function detectGalaxies(graphNodes, graphEdges) {
     }
   });
 
-  // 命名星系
+  // 命名知识簇
   galaxies.forEach(function(gal) {
-    // 统计节点中最常见的关键词来确定星系名称
+    // 统计节点中最常见的关键词来确定知识簇名称
     var allText = gal.nodeIds.map(function(id) {
       return graphNodes[id].fullText || '';
     }).join(' ');
@@ -243,14 +243,14 @@ function detectGalaxies(graphNodes, graphEdges) {
     });
   });
 
-  console.log('[Knowlink] 检测到 ' + galaxies.length + ' 个星系，共 ' + n + ' 个节点');
+  console.log('[Knowlink] 检测到 ' + galaxies.length + ' 个知识簇，共 ' + n + ' 个节点');
   galaxies.forEach(function(g) {
-    console.log('[Knowlink]   ' + g.name + ': ' + g.nodeIds.length + ' 颗恒星');
+    console.log('[Knowlink]   ' + g.name + ': ' + g.nodeIds.length + ' 个节点');
   });
 }
 
 // ====================================================================
-//  星系布局引擎 — 螺旋臂 + 行星轨道
+//  知识簇布局引擎 — 螺旋布局 + 同源簇
 // ====================================================================
 function computeKnowlinkLayout(graphNodes, graphEdges, containerW, containerH) {
   var W = containerW || 800, H = containerH || 600;
@@ -259,7 +259,7 @@ function computeKnowlinkLayout(graphNodes, graphEdges, containerW, containerH) {
   var n = graphNodes.length;
   if (!n) return;
 
-  // 情形: 无星系 → 用默认圆形布局
+  // 情形: 无知识簇 → 用默认圆形布局
   if (!galaxies.length) {
     var cx = W / 2, cy = H / 2, R = Math.min(W, H) * 0.3;
     graphNodes.forEach(function(nd, i) {
@@ -270,7 +270,7 @@ function computeKnowlinkLayout(graphNodes, graphEdges, containerW, containerH) {
     return;
   }
 
-  // 每个星系分配一个中心位置
+  // 每个知识簇分配一个中心位置
   var padding = 220;
   var galCount = galaxies.length;
   var cols = Math.ceil(Math.sqrt(galCount));
@@ -282,12 +282,12 @@ function computeKnowlinkLayout(graphNodes, graphEdges, containerW, containerH) {
     var col = gi % cols, row = Math.floor(gi / cols);
     var cx = padding + cellW * (col + 0.5);
     var cy = padding + cellH * (row + 0.5);
-    // 向画布中心压缩 50%，缩短星系间距离（左右星系更靠近）
+    // 向画布中心压缩 50%，缩短知识簇间距离（左右知识簇更靠近）
     gal.centerX = W / 2 + (cx - W / 2) * 0.5;
     gal.centerY = H / 2 + (cy - H / 2) * 0.5;
   });
 
-  // 在每个星系内部用螺旋臂排列节点
+  // 在每个知识簇内部用螺旋布局排列节点
   galaxies.forEach(function(gal) {
     var ids = gal.nodeIds.slice(); // 修复: 复制后再排序，避免修改 gal.nodeIds
     if (!ids.length) return;
@@ -302,7 +302,7 @@ function computeKnowlinkLayout(graphNodes, graphEdges, containerW, containerH) {
     ids.sort(function(a, b) { return (deg[b] || 0) - (deg[a] || 0); });
 
     var armCount = Math.max(2, Math.min(4, Math.ceil(ids.length / 6)));
-    var maxR = Math.min(cellW, cellH) * 0.28;  // 减小 maxR，星系更紧凑
+    var maxR = Math.min(cellW, cellH) * 0.28;  // 减小 maxR，知识簇更紧凑
 
     ids.forEach(function(nodeId, i) {
       var nd = graphNodes[nodeId];
@@ -325,7 +325,7 @@ function computeKnowlinkLayout(graphNodes, graphEdges, containerW, containerH) {
     });
   });
 
-  // 同源节点的行星轨道偏移
+  // 同源节点的同源簇偏移
   var sourceGroups = {};
   graphNodes.forEach(function(nd) {
     if (!nd.url) return;
@@ -393,9 +393,9 @@ function runKnowlinkForceSimulation(graphNodes, graphEdges, W, H) {
       forces[e.to  ].fx -= ffx; forces[e.to  ].fy -= ffy;
     });
 
-    // 星系中心引力 + 星系间排斥
+    // 知识簇中心引力 + 知识簇间排斥
     graphNodes.forEach(function(nd, i) {
-      // 拉向所属星系中心
+      // 拉向所属知识簇中心
       if (nd.knowlink) {
         var gal = galaxies.find(function(g) { return g.id === nd.knowlink; });
         if (gal) {
@@ -403,16 +403,16 @@ function runKnowlinkForceSimulation(graphNodes, graphEdges, W, H) {
           forces[i].fy += (gal.centerY - nd.y) * 0.003;
         }
       }
-      // 星系间排斥：其他星系中心推开本星系节点（减弱，配合中心压缩）
+      // 知识簇间排斥：其他知识簇中心推开本知识簇节点（减弱，配合中心压缩）
       galaxies.forEach(function(other) {
         if (other.id === nd.knowlink) return;
         var dx = nd.x - other.centerX, dy = nd.y - other.centerY;
         var d = Math.sqrt(dx*dx + dy*dy) || 1;
-        var f = 400 / (d * d);  // 星系间排斥力（减弱）
+        var f = 400 / (d * d);  // 知识簇间排斥力（减弱）
         forces[i].fx += (dx / d) * f;
         forces[i].fy += (dy / d) * f;
       });
-      // 全局中心引力（把星系拉向中间）
+      // 全局中心引力（把知识簇拉向中间）
       forces[i].fx += (W/2 - nd.x) * 0.0005;
       forces[i].fy += (H/2 - nd.y) * 0.0005;
 
@@ -640,7 +640,7 @@ function relaxNewNodes(newNodeIndices, iterations) {
       if (forces[e.to])   { forces[e.to].fx -= ffx; forces[e.to].fy -= ffy; }
     });
 
-    // 星系中心引力（仅对参与节点）
+    // 知识簇中心引力（仅对参与节点）
     partList.forEach(function(i) {
       var nd = graphNodes[i];
       if (nd.knowlink) {
@@ -745,7 +745,7 @@ function buildKnowlinkGraph(knowledgePoints, filterText) {
 
   console.log('[Knowlink] 构建图: ' + n + ' 节点, ' + graphEdges.length + ' 条边');
 
-  // 自动检测星系
+  // 自动检测知识簇
   detectGalaxies(graphNodes, graphEdges);
 }
 

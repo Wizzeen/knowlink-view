@@ -1,6 +1,6 @@
 // ====================================================================
 //  KnowLink 知识星系 — 全屏视图逻辑 (network.js)
-//  独立标签页中的沉浸式星系探索体验
+//  独立标签页中的沉浸式知识簇探索体验
 // ====================================================================
 
 // ---- PDF.js Worker 初始化 (从内联脚本移出，解决CSP报错) ----
@@ -63,9 +63,9 @@ var detailPanel  = document.getElementById('detail-panel');
 // 面包屑
 var crumbAll    = document.getElementById('crumb-all');
 var crumbKnowlink = document.getElementById('crumb-knowlink');
-var crumbStar   = document.getElementById('crumb-star');
+var crumbNode   = document.getElementById('crumb-node');
 var sepKnowlink   = document.getElementById('sep-knowlink');
-var sepStar     = document.getElementById('sep-star');
+var sepNode     = document.getElementById('sep-node');
 
 // ---- 状态 ----
 var knowledgePoints = [];
@@ -127,21 +127,21 @@ function updateBreadcrumb() {
     }
 
     crumbKnowlink.style.display = '';
-    crumbKnowlink.textContent = window.I18n ? window.I18n.t('breadcrumb.knowlink', {name: galName || ''}) : (galName || '星系');
+    crumbKnowlink.textContent = window.I18n ? window.I18n.t('breadcrumb.knowlink', {name: galName || ''}) : (galName || '知识簇');
     sepKnowlink.style.display = '';
 
-    crumbStar.style.display = '';
-    crumbStar.textContent = nd ? (window.I18n ? window.I18n.t('breadcrumb.star', {label: nd.label}) : nd.label) : '';
-    sepStar.style.display = '';
+    crumbNode.style.display = '';
+    crumbNode.textContent = nd ? (window.I18n ? window.I18n.t('breadcrumb.star', {label: nd.label}) : nd.label) : '';
+    sepNode.style.display = '';
 
     crumbAll.classList.remove('current');
     crumbKnowlink.classList.remove('current');
-    crumbStar.classList.add('current');
+    crumbNode.classList.add('current');
   } else {
     crumbKnowlink.style.display = 'none';
-    crumbStar.style.display = 'none';
+    crumbNode.style.display = 'none';
     sepKnowlink.style.display = 'none';
-    sepStar.style.display = 'none';
+    sepNode.style.display = 'none';
     crumbAll.classList.add('current');
   }
 }
@@ -196,9 +196,9 @@ function updateStats() {
   var I = window.I18n;
   if (n) {
     var density = n > 1 ? Math.round((2 * e) / (n * (n - 1)) * 100) : 0;
-    statsBadge.textContent = I ? I.t('stats.count', {n: n, g: g, e: e}) : (n + ' 节点 · ' + g + ' 星系 · ' + e + ' 连线');
+    statsBadge.textContent = I ? I.t('stats.count', {n: n, g: g, e: e}) : (n + ' 节点 · ' + g + ' 知识簇 · ' + e + ' 连线');
   } else {
-    statsBadge.textContent = I ? I.t('stats.empty') : '知识宇宙空旷无垠';
+    statsBadge.textContent = I ? I.t('stats.empty') : '知识库空旷无垠';
   }
 }
 
@@ -253,7 +253,7 @@ function showDetail(idx) {
   document.getElementById('detail-text').textContent = nd.fullText;
   var I = window.I18n;
   document.getElementById('detail-stats').innerHTML =
-    (I ? I.t('detail.knowlink', {name: galName || I.t('detail.wanderer')}) : ('所属星系: ' + (galName || '流浪恒星'))) + '<br>' +
+    (I ? I.t('detail.knowlink', {name: galName || I.t('detail.wanderer')}) : ('所属知识簇: ' + (galName || '独立节点'))) + '<br>' +
     (I ? I.t('detail.connections', {count: connCount, ai: aiConnCount}) : ('关联节点: ' + connCount + ' 个（其中 ' + aiConnCount + ' 个 AI 连线）')) + '<br>' +
     (I ? I.t('detail.index', {idx: idx}) : ('索引: #' + idx));
 
@@ -547,7 +547,7 @@ function incrementalRefresh(message) {
   // 增量添加节点
   var newNodeIndices = addNodesToGraph(trulyNewPoints, W, H);
 
-  // 重新检测星系（为新节点分配星系）
+  // 重新检测知识簇（为新节点分配知识簇）
   detectGalaxies(graphNodes, graphEdges);
 
   // 轻量力模拟
@@ -561,7 +561,7 @@ function incrementalRefresh(message) {
     window.KnowLinkAI._normalize();
   }
 
-  // 为新 AI 连线启动虫洞脉冲动画
+  // 为新 AI 连线启动AI 关联脉冲动画
   setTimeout(function() {
     if (window.KnowLinkAI && typeof window.KnowLinkAI._getAIEdges === 'function') {
       var aiEdges = window.KnowLinkAI._getAIEdges();
@@ -580,7 +580,7 @@ function incrementalRefresh(message) {
   renderGraph();
 }
 
-// ==================== 🌀 虫洞 · AI 抽屉逻辑 ====================
+// ==================== 🌀 AI 关联 · AI 抽屉逻辑 ====================
 
 // ---- DOM 引用 ----
 var btnWormholeToggle    = document.getElementById('btn-wormhole-toggle');

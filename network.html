@@ -11,7 +11,7 @@
   <!-- 观测台顶栏 -->
   <div id="topbar">
     <h1 data-i18n="app.name">知识星系</h1>
-    <input type="text" id="search-input" data-i18n-placeholder="search.stars" placeholder="搜索星体..." />
+    <input type="text" id="search-input" data-i18n-placeholder="search.stars" placeholder="搜索知识点..." />
     <button id="btn-lang" title="中 / EN">🌐</button>
     <button id="btn-theme" title="切换主题">🎨</button>
     <button id="btn-export" data-i18n="export" data-i18n-title="export.json" title="导出 JSON">📤 导出</button>
@@ -22,11 +22,11 @@
 
   <!-- 导航面包屑 -->
   <div id="breadcrumb">
-    <span class="crumb" id="crumb-all" data-i18n="breadcrumb.all" title="全景宇宙">全部</span>
+    <span class="crumb" id="crumb-all" data-i18n="breadcrumb.all" title="全部">全部</span>
     <span class="sep" id="sep-knowlink" style="display:none;">›</span>
     <span class="crumb" id="crumb-knowlink" style="display:none;"></span>
-    <span class="sep" id="sep-star" style="display:none;">›</span>
-    <span class="current" id="crumb-star" style="display:none;"></span>
+    <span class="sep" id="sep-node" style="display:none;">›</span>
+    <span class="current" id="crumb-node" style="display:none;"></span>
   </div>
 
   <!-- 观测画布 -->
@@ -35,9 +35,9 @@
 
     <!-- 图例 -->
     <div id="legend">
-      <div class="item"><span class="leg-line star"></span> <span data-i18n="legend.star">恒星（知识点）</span></div>
-      <div class="item"><span class="leg-line orbit"></span> <span data-i18n="legend.orbit">行星轨道（同源簇）</span></div>
-      <div class="item"><span class="leg-line constellation"></span> <span data-i18n="legend.constellation">星座连线（语义关联）</span></div>
+      <div class="item"><span class="leg-line star"></span> <span data-i18n="legend.star">节点</span></div>
+      <div class="item"><span class="leg-line orbit"></span> <span data-i18n="legend.orbit">同源</span></div>
+      <div class="item"><span class="leg-line constellation"></span> <span data-i18n="legend.constellation">关联</span></div>
       <div class="item"><span class="leg-line wormhole"></span> <span data-i18n="legend.wormhole">AI 连线</span></div>
     </div>
 
@@ -48,10 +48,10 @@
       <button id="btn-reset"    data-i18n-title="zoom.reset" title="重置视图">↺</button>
     </div>
 
-    <!-- 星体悬浮提示 -->
+    <!-- 节点悬浮提示 -->
     <div id="tooltip"></div>
 
-    <!-- 星体详情面板 -->
+    <!-- 节点详情面板 -->
     <div id="detail-panel">
       <button class="detail-close" id="detail-close">&times;</button>
       <h3 id="detail-title"></h3>
@@ -61,10 +61,10 @@
       <button class="detail-goto" id="detail-goto" data-i18n="trace.source">🔗 追溯来源</button>
     </div>
 
-    <!-- 虫洞切换按钮 -->
+    <!-- AI 关联切换按钮 -->
     <button id="btn-wormhole-toggle" data-i18n-title="wormhole.toggle" title="AI 分析面板"><span class="toggle-en">AI</span><span class="toggle-cn" data-i18n="wormhole.title.short">分析</span></button>
 
-    <!-- 虫洞 · AI 抽屉 -->
+    <!-- AI 关联 · AI 抽屉 -->
     <div id="wormhole-drawer">
       <div class="wh-drawer-header">
         <h3 data-i18n="wormhole.title">AI 分析</h3>

@@ -253,7 +253,7 @@ function updateStatusBadge() {
       : ('📂 ' + kbName + ' · ✅ ' + knowledgePoints.length + ' / ' + maxItems);
     badge.style.color = '#10b981';
   } else {
-    badge.textContent = '📂 ' + kbName + ' · ' + (window.I18n ? window.I18n.t('status.void') : '虚空');
+    badge.textContent = '📂 ' + kbName + ' · ' + (window.I18n ? window.I18n.t('status.void') : '空');
     badge.style.color = '#6b7280';
   }
 }
@@ -265,8 +265,8 @@ function renderList() {
   if (!knowledgePoints.length) {
     emptyState.hidden = false;
     emptyState.innerHTML = '<div style="text-align:center;padding:20px;">'
-      + '<div style="font-size:32px;margin-bottom:8px;">🪐</div>'
-      + '<div>' + (window.I18n ? window.I18n.t('empty.kb.detail', {name: escapeHtml(getActiveKBName())}) : ('知识库「' + escapeHtml(getActiveKBName()) + '」中还没有星光')) + '</div>'
+      + '<div style="font-size:32px;margin-bottom:8px;">📄</div>'
+      + '<div>' + (window.I18n ? window.I18n.t('empty.kb.detail', {name: escapeHtml(getActiveKBName())}) : ('知识库「' + escapeHtml(getActiveKBName()) + '」中还没有知识点')) + '</div>'
       + '<div style="font-size:12px;color:#6b7280;">' + (window.I18n ? window.I18n.t('empty.kb.hint') : '选中网页文字后点击浮动按钮收集') + '</div>'
       + '</div>';
     return;
@@ -590,7 +590,7 @@ if (btnFullscreen) {
   });
 }
 
-// ==================== 🌀 虫洞 · AI 引擎逻辑 ====================
+// ==================== AI 引擎逻辑 ====================
 
 // ---- DOM 引用 ----
 var whDropzone      = document.getElementById('wh-dropzone');

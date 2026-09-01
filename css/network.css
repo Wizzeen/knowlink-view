@@ -311,7 +311,7 @@
       transform: scale(0.92);
     }
 
-    /* ========== 星体提示浮层 ========== */
+    /* ========== 节点提示浮层 ========== */
     #tooltip {
       position: absolute;
       pointer-events: none;
@@ -338,7 +338,7 @@
       font-weight: 500;
     }
 
-    /* ========== 星体详情面板 ========== */
+    /* ========== 节点详情面板 ========== */
     #detail-panel {
       position: absolute;
       top: 16px;
@@ -451,7 +451,7 @@
       transform: scale(0.97);
     }
 
-    /* ========== 虫洞 · AI 抽屉面板 ========== */
+    /* ========== AI 抽屉面板 ========== */
     /* 切换按钮 */
     #btn-wormhole-toggle {
       position: absolute;

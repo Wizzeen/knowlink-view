@@ -310,7 +310,7 @@
     .card:hover::before {
       opacity: 1;
     }
-    /* 悬停时的星光扫过效果 */
+    /* 悬停时的扫过效果 */
     .card::after {
       content: '';
       position: absolute;
@@ -523,7 +523,7 @@
       color: var(--text);
     }
 
-    /* ========== 虫洞 · AI 知识引擎 ========== */
+    /* ========== AI 知识引擎 ========== */
     #wormhole-section {
       margin-top: 16px;
       padding-top: 14px;

@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "KnowLink 知识星系",
   "version": "2.0",
-  "description": "将你的知识可视化为一片璀璨的星际宇宙 — 恒星、星座与虫洞交织的知识星系",
+  "description": "将你的知识可视化为关联图谱 — 知识点、关联与 AI 发现的知识网络",
   "permissions": [
     "sidePanel",
     "storage",
