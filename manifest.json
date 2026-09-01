@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "KnowLink 知识星系",
+  "version": "2.0",
+  "description": "将你的知识可视化为一片璀璨的星际宇宙 — 恒星、星座与虫洞交织的知识星系",
+  "permissions": [
+    "sidePanel",
+    "storage",
+    "activeTab",
+    "scripting",
+    "contextMenus",
+    "tabs",
+    "history"
+  ],
+  "host_permissions": [
+    "<all_urls>",
+    "file:///*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "打开知识星系"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["network.html", "pdf-viewer.html", "css/network.css", "css/pdf-viewer.css", "js/views/network.js", "js/views/pdf-viewer.js", "js/core/galaxy-engine.js", "js/core/galaxy-layout.js", "js/core/galaxy-renderer.js", "js/core/nlp-engine.js", "js/core/cloud-adapter.js", "js/core/ai-store.js", "js/core/ai-edges.js", "js/core/kb-store.js", "js/core/ai-config.js", "js/core/ai-wormhole.js", "js/core/ai-dedup.js", "js/core/utils.js"],
+      "matches": ["<all_urls>"],
+      "use_dynamic_url": true
+    }
+  ],
+  "externally_connectable": {
+    "matches": ["file:///*"]
+  }
+}

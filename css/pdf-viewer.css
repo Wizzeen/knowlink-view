@@ -1,0 +1,209 @@
+
+    :root { color-scheme: dark; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%; height: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      background: #060610;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    /* ========== 顶部工具栏 ========== */
+    #toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      background: rgba(13,13,40,0.94);
+      color: #e8ecf1;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(100,116,180,0.12);
+      flex-shrink: 0;
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      position: relative;
+      z-index: 10;
+    }
+    #toolbar::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 5%; width: 90%; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(139,92,246,0.3), transparent);
+      pointer-events: none;
+    }
+    #toolbar .filename {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      color: #c4b5fd;
+    }
+    #toolbar button {
+      background: rgba(20,20,50,0.5);
+      color: #bcc8dd;
+      border: 1px solid rgba(100,116,180,0.18);
+      border-radius: 8px;
+      padding: 6px 14px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    #toolbar button:hover {
+      background: rgba(80,60,160,0.25);
+      border-color: rgba(139,92,246,0.4);
+      color: #e8ecf1;
+      box-shadow: 0 0 16px rgba(139,92,246,0.08);
+    }
+    #toolbar button:active { transform: scale(0.96); }
+
+    /* ---- 最近 PDF 下拉 ---- */
+    #recent-pdfs-dropdown { position: relative; display: inline-block; }
+    #btn-recent-pdfs {
+      background: rgba(20,20,50,0.5);
+      color: #bcc8dd;
+      border: 1px solid rgba(100,116,180,0.18);
+      border-radius: 8px;
+      padding: 6px 14px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    #btn-recent-pdfs:hover {
+      background: rgba(80,60,160,0.25);
+      border-color: rgba(139,92,246,0.4);
+      color: #e8ecf1;
+      box-shadow: 0 0 16px rgba(139,92,246,0.08);
+    }
+    #recent-pdfs-panel {
+      display: none;
+      position: absolute;
+      right: 0; top: 100%;
+      margin-top: 6px;
+      background: rgba(13,13,40,0.98);
+      border: 1px solid rgba(100,116,180,0.18);
+      border-radius: 12px;
+      min-width: 340px; max-width: 520px; max-height: 380px;
+      overflow-y: auto;
+      z-index: 1000;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.55);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    #recent-pdfs-panel::-webkit-scrollbar { width: 4px; }
+    #recent-pdfs-panel::-webkit-scrollbar-track { background: transparent; }
+    #recent-pdfs-panel::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.2); border-radius: 10px; }
+    #recent-pdfs-panel.show { display: block; }
+    #recent-pdfs-panel .panel-header {
+      padding: 10px 14px; font-size: 11px; font-weight: 600;
+      color: #8899b4; border-bottom: 1px solid rgba(100,116,180,0.1);
+      display: flex; justify-content: space-between; align-items: center;
+      letter-spacing: 0.3px; text-transform: uppercase;
+    }
+    #recent-pdfs-panel .panel-header button {
+      background: none; border: 1px solid rgba(100,116,180,0.15);
+      color: #a78bfa; cursor: pointer; font-size: 11px;
+      padding: 3px 10px; border-radius: 6px; transition: all 0.2s ease;
+    }
+    #recent-pdfs-panel .panel-header button:hover {
+      background: rgba(139,92,246,0.12); border-color: rgba(139,92,246,0.3);
+    }
+    #recent-pdfs-list { list-style: none; }
+    #recent-pdfs-list li {
+      padding: 10px 14px; cursor: pointer; font-size: 12px;
+      border-bottom: 1px solid rgba(100,116,180,0.06);
+      transition: all 0.2s ease;
+      display: flex; align-items: center; gap: 10px;
+    }
+    #recent-pdfs-list li:hover { background: rgba(80,60,160,0.2); }
+    #recent-pdfs-list li .pdf-icon { font-size: 18px; flex-shrink: 0; opacity: 0.8; }
+    #recent-pdfs-list li .pdf-info { flex: 1; overflow: hidden; }
+    #recent-pdfs-list li .pdf-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; color: #e8ecf1; }
+    #recent-pdfs-list li .pdf-path { font-size: 10px; color: #5a6a80; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+    #recent-pdfs-list li .pdf-time { font-size: 10px; color: #6b7a90; flex-shrink: 0; }
+    #recent-pdfs-list .empty-hint { padding: 20px 14px; text-align: center; color: #5a6a80; font-size: 12px; font-style: italic; }
+    #recent-pdfs-list .loading-hint { padding: 20px 14px; text-align: center; color: #8899b4; font-size: 12px; }
+
+    /* ========== PDF 查看区域 — Chrome 原生阅读器 ========== */
+    #viewer-container {
+      flex: 1;
+      width: 100%;
+      overflow: hidden;
+      background: #1a1a2e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #pdf-embed {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* ========== 加载 / 提示 ========== */
+    #landing-msg {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #8899b4;
+      font-size: 14px;
+      gap: 14px;
+      text-align: center;
+      padding: 60px;
+    }
+    #landing-msg .icon { font-size: 52px; margin-bottom: 12px; opacity: 0.7; }
+    #landing-msg .hint { font-size: 12px; color: #5a6a80; line-height: 1.8; }
+
+    /* ========== 错误覆盖层 ========== */
+    #error-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(6,6,16,0.97);
+      color: #e8ecf1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      z-index: 9999;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    #error-overlay.hidden { display: none; }
+    #error-overlay .icon { font-size: 52px; margin-bottom: 20px; opacity: 0.8; }
+    #error-overlay p { margin: 8px 0; font-size: 14px; line-height: 1.6; }
+    #error-overlay .url-display {
+      font-size: 12px; color: #8899b4; word-break: break-all;
+      max-width: 85%; text-align: center; margin-top: 16px;
+      background: rgba(20,20,50,0.6); padding: 10px 18px; border-radius: 8px;
+      border: 1px solid rgba(100,116,180,0.1); font-family: monospace;
+    }
+    #error-overlay .hint {
+      font-size: 12px; color: #5a6a80; margin-top: 20px;
+      line-height: 1.8; text-align: center;
+    }
+    #error-overlay button {
+      margin-top: 20px;
+      background: linear-gradient(135deg, #7c3aed, #6d28d9);
+      color: #fff; border: none; border-radius: 9px;
+      padding: 10px 24px; cursor: pointer;
+      font-size: 13px; font-weight: 600; letter-spacing: 0.3px;
+      transition: all 0.25s ease;
+      box-shadow: 0 2px 12px rgba(124,58,237,0.3);
+    }
+    #error-overlay button:hover {
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      box-shadow: 0 4px 20px rgba(139,92,246,0.4);
+      transform: translateY(-1px);
+    }
+    #error-overlay button:active { transform: scale(0.97); }
+  

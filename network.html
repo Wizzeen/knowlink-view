@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KnowLink 知识星系 · 全屏</title>
+    <link rel="stylesheet" href="css/network.css" />
+</head>
+<body>
+
+  <!-- 观测台顶栏 -->
+  <div id="topbar">
+    <h1 data-i18n="app.name">知识星系</h1>
+    <input type="text" id="search-input" data-i18n-placeholder="search.stars" placeholder="搜索星体..." />
+    <button id="btn-lang" title="中 / EN">🌐</button>
+    <button id="btn-theme" title="切换主题">🎨</button>
+    <button id="btn-export" data-i18n="export" data-i18n-title="export.json" title="导出 JSON">📤 导出</button>
+    <button id="btn-import" data-i18n="import" data-i18n-title="import.json" title="导入 JSON">📥 导入</button>
+    <input type="file" id="import-file" accept=".json" style="display:none;" />
+    <span class="stat-badge" id="stats-badge" data-i18n="stats.loading">加载中...</span>
+  </div>
+
+  <!-- 导航面包屑 -->
+  <div id="breadcrumb">
+    <span class="crumb" id="crumb-all" data-i18n="breadcrumb.all" title="全景宇宙">全部</span>
+    <span class="sep" id="sep-galaxy" style="display:none;">›</span>
+    <span class="crumb" id="crumb-galaxy" style="display:none;"></span>
+    <span class="sep" id="sep-star" style="display:none;">›</span>
+    <span class="current" id="crumb-star" style="display:none;"></span>
+  </div>
+
+  <!-- 观测画布 -->
+  <div id="canvas-wrap">
+    <canvas id="galaxy-canvas"></canvas>
+
+    <!-- 图例 -->
+    <div id="legend">
+      <div class="item"><span class="leg-line star"></span> <span data-i18n="legend.star">恒星（知识点）</span></div>
+      <div class="item"><span class="leg-line orbit"></span> <span data-i18n="legend.orbit">行星轨道（同源簇）</span></div>
+      <div class="item"><span class="leg-line constellation"></span> <span data-i18n="legend.constellation">星座连线（语义关联）</span></div>
+      <div class="item"><span class="leg-line wormhole"></span> <span data-i18n="legend.wormhole">AI 连线</span></div>
+    </div>
+
+    <!-- 观测控制 -->
+    <div id="controls">
+      <button id="btn-zoom-in"  data-i18n-title="zoom.in"  title="放大">＋</button>
+      <button id="btn-zoom-out" data-i18n-title="zoom.out" title="缩小">－</button>
+      <button id="btn-reset"    data-i18n-title="zoom.reset" title="重置视图">↺</button>
+    </div>
+
+    <!-- 星体悬浮提示 -->
+    <div id="tooltip"></div>
+
+    <!-- 星体详情面板 -->
+    <div id="detail-panel">
+      <button class="detail-close" id="detail-close">&times;</button>
+      <h3 id="detail-title"></h3>
+      <div class="detail-source" id="detail-source"></div>
+      <div class="detail-text" id="detail-text"></div>
+      <div class="detail-stats" id="detail-stats"></div>
+      <button class="detail-goto" id="detail-goto" data-i18n="trace.source">🔗 追溯来源</button>
+    </div>
+
+    <!-- 虫洞切换按钮 -->
+    <button id="btn-wormhole-toggle" data-i18n-title="wormhole.toggle" title="AI 分析面板"><span class="toggle-en">AI</span><span class="toggle-cn" data-i18n="wormhole.title.short">分析</span></button>
+
+    <!-- 虫洞 · AI 抽屉 -->
+    <div id="wormhole-drawer">
+      <div class="wh-drawer-header">
+        <h3 data-i18n="wormhole.title">AI 分析</h3>
+        <button class="wh-drawer-close" id="btn-wh-drawer-close">&times;</button>
+      </div>
+      <div class="wh-drawer-content">
+        <!-- 拖放区 -->
+        <div class="wh-drawer-dropzone" id="wh-drawer-dropzone">
+          <div data-i18n="wormhole.drop.simple">📄 拖入 PDF 分析</div>
+          <div style="font-size:10px;margin-top:2px;" data-i18n-html="wormhole.drop.or">
+            或 <span class="wh-link" id="wh-drawer-select-file">点击选择</span>
+          </div>
+          <input type="file" id="wh-drawer-file-input" accept=".pdf" style="display:none;" />
+        </div>
+
+        <!-- 连接密度控制 (漏洞5) -->
+        <div id="wh-threshold-group">
+          <label>
+            <span data-i18n="wormhole.threshold">🔗 连接相关性阈值</span>
+            <span class="wh-threshold-val" id="wh-threshold-val">0.4</span>
+          </label>
+          <input type="range" id="wh-threshold-slider" min="0.1" max="0.9" step="0.05" value="0.4" />
+          <div class="wh-connection-count" id="wh-connection-count" data-i18n="wormhole.connection.count.none">匹配 -- 条连接</div>
+        </div>
+
+        <!-- 建议连线列表 -->
+        <div id="wh-suggestions-container">
+          <ul class="wh-suggestion-list" id="wh-suggestion-list"></ul>
+          <div class="wh-empty-state" id="wh-suggestion-empty" data-i18n-html="wormhole.suggestions.empty">
+            🪐 暂无AI建议连接<br>
+            <span style="font-size:10px;">分析PDF后将自动推荐关联</span>
+          </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="wh-drawer-actions">
+          <button id="btn-wh-apply-all" data-i18n="wormhole.apply.all">✅ 应用全部建议</button>
+          <button id="btn-wh-clear-all" data-i18n="wormhole.clear.all">🗑️ 清除所有 AI 连线</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/core/utils.js"></script>
+  <script src="js/core/i18n.js"></script>
+  <script src="lib/pdf.min.js"></script>
+  <script src="js/core/nlp-engine.js"></script>
+  <script src="js/core/cloud-adapter.js"></script>
+  <script src="js/core/ai-store.js"></script>
+  <script src="js/core/ai-edges.js"></script>
+  <script src="js/core/kb-store.js"></script>
+  <script src="js/core/galaxy-layout.js"></script>
+  <script src="js/core/galaxy-renderer.js"></script>
+  <script src="js/core/galaxy-engine.js"></script>
+  <script src="js/core/ai-config.js"></script>
+  <script src="js/core/ai-wormhole.js"></script>
+  <script src="js/views/network.js"></script>
+</body>
+</html>

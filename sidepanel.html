@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KnowLink 知识星系</title>
+    <link rel="stylesheet" href="css/sidepanel.css" />
+</head>
+<body>
+
+  <!-- 顶部工具栏 -->
+  <div id="toolbar">
+    <h2 data-i18n="app.name.short">📚 KnowLink 知识库</h2>
+    <div id="toolbar-right">
+      <div id="kb-selector-group" style="display:flex;align-items:center;gap:3px;">
+        <select id="kb-selector" data-i18n-title="switch.kb" title="切换知识库"></select>
+        <button class="toolbar-btn" id="btn-new-kb" data-i18n-title="new.kb" title="新建知识库">＋</button>
+        <button class="toolbar-btn" id="btn-rename-kb" data-i18n-title="rename" title="重命名">✏️</button>
+        <button class="toolbar-btn" id="btn-delete-kb" data-i18n-title="delete" title="删除">🗑️</button>
+      </div>
+      <span id="status-badge" style="font-size:10px;color:var(--text-secondary);"></span>
+      <button class="toolbar-btn" id="btn-lang" title="中 / EN">🌐</button>
+      <button class="toolbar-btn" id="btn-theme" title="切换主题">🎨</button>
+      <button class="toolbar-btn" id="btn-fullscreen" data-i18n-title="fullscreen" title="在新标签页中打开全屏知识星系">⛶</button>
+      <button class="toolbar-btn" id="btn-settings" data-i18n-title="settings" title="搜索 / 导入导出">⋯</button>
+      <input type="file" id="import-file" accept=".json" style="display:none;" />
+    </div>
+
+    <!-- 设置下拉面板（搜索 / 导入导出，与 AI 设置区分） -->
+    <div id="settings-panel">
+      <div class="sp-section">
+        <div class="sp-label" data-i18n="search.points">🔍 搜索知识点</div>
+        <input type="text" id="search-input" data-i18n-placeholder="search.placeholder" placeholder="输入关键词过滤..." />
+      </div>
+      <div class="sp-divider"></div>
+      <div class="sp-actions">
+        <button class="toolbar-btn" id="btn-export" data-i18n="export.json" data-i18n-title="export.json" title="导出 JSON">📤 导出 JSON</button>
+        <button class="toolbar-btn" id="btn-import" data-i18n="import.json" data-i18n-title="import.json" title="导入 JSON">📥 导入 JSON</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 知识列表 -->
+  <div id="knowledge-panel">
+    <ul id="knowledge-list"></ul>
+    <div id="empty-state" data-i18n="empty.kb">🪐 知识宇宙中还没有星光，选中网页文字即可收集。</div>
+    <button id="clear-btn" data-i18n="clear.kb">🗑️ 清空当前知识库</button>
+
+    <!-- 最近 PDF 区域 -->
+    <div id="recent-pdfs-section">
+      <h3 data-i18n="recent.pdfs">📂 今天打开过的 PDF
+        <button class="toolbar-btn" id="btn-refresh-pdfs-sp" style="font-size:10px;padding:3px 8px;" data-i18n-title="refresh" title="刷新">🔄</button>
+      </h3>
+      <ul id="recent-pdfs-list-sp">
+        <li class="sp-empty" data-i18n="recent.pdfs.loading">加载中...</li>
+      </ul>
+    </div>
+
+    <!-- 🌀 虫洞 · AI 知识引擎 -->
+    <div id="wormhole-section">
+      <div class="wh-header">
+        <h3 data-i18n="wormhole.title">🌀 虫洞 · AI 知识引擎 <span class="wh-status ready" id="wh-status-dot" data-i18n-title="wormhole.ready" title="AI引擎就绪"></span></h3>
+        <button id="btn-wh-settings" data-i18n-title="wormhole.settings" title="AI设置">⚙️</button>
+      </div>
+
+      <!-- 首次引导 (漏洞6) -->
+      <div id="wh-onboarding" style="display:none;">
+        <div class="wh-result-card" style="border-left-color:#f59e0b;text-align:center;padding:16px;">
+          <div style="font-size:28px;margin-bottom:4px;">🔧</div>
+          <div style="font-size:12px;color:var(--text);margin-bottom:4px;" data-i18n="wormhole.onboarding.title">☁️ 配置云端 API 以使用 AI 分析</div>
+          <div style="font-size:10px;color:var(--text-secondary);margin-bottom:10px;" data-i18n="wormhole.onboarding.desc">配置自定义 API 后可进行 PDF 智能摘要、知识点提取和关联分析</div>
+          <button id="btn-wh-onboarding-setup" style="font-size:11px;padding:6px 16px;background:var(--accent-soft);border:1px solid var(--accent);color:var(--accent-text);border-radius:7px;cursor:pointer;" data-i18n="wormhole.onboarding.btn">⚙️ 配置云端 API</button>
+        </div>
+      </div>
+
+      <!-- 拖放区 -->
+      <div id="wh-dropzone">
+        <div class="wh-drop-icon">📄</div>
+        <div class="wh-drop-text" data-i18n-html="wormhole.drop.text">
+          拖入 PDF 文件到这里<br>
+          或 <span class="wh-link" id="wh-select-file">点击选择文件</span>
+          <br><span class="wh-link" id="wh-analyze-current" style="font-size:10px;">📋 分析当前打开的 PDF</span>
+        </div>
+        <input type="file" id="wh-file-input" accept=".pdf" />
+      </div>
+
+      <!-- 空文本警告 (漏洞1) -->
+      <div class="wh-empty-warning" id="wh-empty-warning"></div>
+
+      <!-- 进度条 -->
+      <div id="wh-progress">
+        <div class="wh-progress-text" id="wh-progress-text" data-i18n="wormhole.analyzing">正在分析...</div>
+        <div class="wh-progress-bar"><div class="wh-progress-fill" id="wh-progress-fill"></div></div>
+      </div>
+
+      <!-- 分析结果 -->
+      <div id="wh-results"></div>
+
+      <!-- 🌀 变化报告（Agent管线输出） -->
+      <div id="wh-change-report">
+        <div class="cr-card">
+          <div class="cr-header">
+            <div class="cr-header-left">
+              <span class="cr-header-icon">📋</span>
+              <div>
+                <div class="cr-header-title" id="cr-report-title" data-i18n="wormhole.report.title">变化报告</div>
+                <div class="cr-header-sub" id="cr-report-sub"></div>
+              </div>
+            </div>
+            <span class="cr-header-badge" id="cr-report-engine"></span>
+          </div>
+
+          <!-- 新知识点 -->
+          <div class="cr-section" id="cr-section-new">
+            <button class="cr-section-toggle" id="cr-toggle-new">
+              <span class="cr-toggle-icon">▼</span>
+              <span data-i18n="wormhole.new.points">🆕 新知识点</span> <span class="cr-section-count" id="cr-count-new">(0)</span>
+            </button>
+            <div class="cr-section-body" id="cr-body-new"></div>
+          </div>
+
+          <!-- 发现关联 -->
+          <div class="cr-section" id="cr-section-connections">
+            <button class="cr-section-toggle" id="cr-toggle-connections">
+              <span class="cr-toggle-icon">▼</span>
+              <span data-i18n="wormhole.new.connections">🔗 发现新关联</span> <span class="cr-section-count" id="cr-count-connections">(0)</span>
+            </button>
+            <div class="cr-section-body" id="cr-body-connections"></div>
+          </div>
+
+          <!-- 可能重复 -->
+          <div class="cr-section" id="cr-section-duplicates">
+            <button class="cr-section-toggle" id="cr-toggle-duplicates">
+              <span class="cr-toggle-icon">▼</span>
+              <span data-i18n="wormhole.maybe.duplicates">🔄 可能重复</span> <span class="cr-section-count" id="cr-count-duplicates">(0)</span>
+            </button>
+            <div class="cr-section-body" id="cr-body-duplicates"></div>
+          </div>
+
+          <!-- 成功摘要（无变化时展示） -->
+          <div class="cr-summary" id="cr-summary" style="display:none;"></div>
+
+          <!-- 底部操作栏 -->
+          <div class="cr-actions" id="cr-actions">
+            <button class="cr-action-btn apply-all" id="cr-btn-apply-all" data-i18n="wormhole.apply.all.report">🚀 全部应用（推荐）</button>
+            <button class="cr-action-btn apply-new" id="cr-btn-apply-new" data-i18n="wormhole.apply.new.only">🆕 仅添加新知识点</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI 设置面板 -->
+      <div id="wh-settings-panel">
+        <label data-i18n="wormhole.provider">API 提供商</label>
+        <select id="wh-settings-provider">
+          <option value="custom" data-i18n="wormhole.provider.custom">自定义 API</option>
+        </select>
+        <label data-i18n="wormhole.api.key">API Key</label>
+        <input type="password" id="wh-settings-apikey" data-i18n-placeholder="wormhole.api.key.placeholder" placeholder="输入 API Key..." />
+        <label data-i18n="wormhole.endpoint">Endpoint URL</label>
+        <input type="text" id="wh-settings-endpoint" data-i18n-placeholder="wormhole.endpoint.placeholder" placeholder="https://api.example.com/v1/chat/completions" />
+        <label data-i18n="wormhole.model">模型名称</label>
+        <input type="text" id="wh-settings-model" data-i18n-placeholder="wormhole.model.placeholder" placeholder="your-model-name" />
+        <div class="wh-setting-btns">
+          <button id="btn-wh-test" data-i18n="wormhole.test">🔍 测试连接</button>
+          <button id="btn-wh-save-config" data-i18n="wormhole.save">💾 保存配置</button>
+        </div>
+        <div id="wh-test-status"></div>
+        <div id="wh-security-note" data-i18n="wormhole.security.note">🔒 API Key 仅存储在本地浏览器存储中，不会上传至任何第三方服务器</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/core/utils.js"></script>
+  <script src="js/core/i18n.js"></script>
+  <script src="lib/pdf.min.js"></script>
+  <script src="js/core/nlp-engine.js"></script>
+  <script src="js/core/cloud-adapter.js"></script>
+  <script src="js/core/ai-store.js"></script>
+  <script src="js/core/ai-edges.js"></script>
+  <script src="js/core/kb-store.js"></script>
+  <script src="js/core/ai-dedup.js"></script>
+  <script src="js/core/ai-config.js"></script>
+  <script src="js/core/ai-wormhole.js"></script>
+  <script src="js/views/sidepanel.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KnowLink PDF 查看器</title>
+    <link rel="stylesheet" href="css/pdf-viewer.css" />
+</head>
+<body>
+  <div id="toolbar">
+    <span style="font-size:16px;">📄</span>
+    <span class="filename" id="filename" data-i18n="loading">加载中...</span>
+    <button id="btn-lang" title="中 / EN">🌐</button>
+    <div id="recent-pdfs-dropdown">
+      <button id="btn-recent-pdfs" data-i18n="recent.pdfs.btn" data-i18n-title="recent.pdfs" title="查看今天打开过的 PDF">📂 最近 PDF ▾</button>
+      <div id="recent-pdfs-panel">
+        <div class="panel-header">
+          <span data-i18n="recent.pdfs.today">📅 今天打开过的 PDF</span>
+          <button id="btn-refresh-pdfs" data-i18n="refresh">🔄 刷新</button>
+        </div>
+        <ul id="recent-pdfs-list">
+          <li class="loading-hint" data-i18n="recent.pdfs.loading">加载中...</li>
+        </ul>
+      </div>
+    </div>
+    <button id="btn-open-external" data-i18n="open.external" data-i18n-title="open.external" title="在浏览器中直接打开">🔗 外部打开</button>
+    <button id="btn-copy-url" data-i18n="copy.path" data-i18n-title="copy.url" title="复制文件路径">📋 复制路径</button>
+  </div>
+
+  <div id="viewer-container">
+    <embed id="pdf-embed" type="application/pdf" />
+  </div>
+  <div id="landing-msg" class="hidden">
+    <div class="icon">📄</div>
+    <p data-i18n="view.pdf.native">通过 Chrome 原生 PDF 阅读器查看文档</p>
+    <p class="hint" data-i18n="view.pdf.hint">从知识星系侧边栏点击知识点即可跳转到对应页面</p>
+  </div>
+
+  <div id="error-overlay" class="hidden">
+    <div class="icon">⚠️</div>
+    <p data-i18n="pdf.load.fail">无法加载 PDF 文件</p>
+    <div class="url-display" id="error-url"></div>
+    <p class="hint" data-i18n-html="pdf.load.fail.hint">
+      请尝试在浏览器中直接打开该文件，或检查文件路径是否正确。
+      <br>本地文件需要启用「允许访问文件 URL」权限。
+    </p>
+    <button id="btn-retry" data-i18n="retry">🔄 重试</button>
+  </div>
+
+  <script src="js/core/utils.js"></script>
+  <script src="js/core/i18n.js"></script>
+  <script src="js/views/pdf-viewer.js"></script>
+</body>
+</html>
