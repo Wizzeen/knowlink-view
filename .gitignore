@@ -1,0 +1,10 @@
+# AI 配置文件（含 API Key，从 ai-config.example.js 复制）
+js/core/ai-config.js
+
+# Node
+node_modules/
+*.log
+
+# 系统
+.DS_Store
+Thumbs.db
