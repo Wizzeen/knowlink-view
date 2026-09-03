@@ -7,7 +7,7 @@
 
 [English](./README.md) · [Knowlink Page（HTML 页面生成器）](https://github.com/Wizeeeee/knowlink-skill)
 
-本项目源于复习期间：打开一堆 PDF 课件时总是不小心关掉浏览器，不得不反复翻找课件。其余功能则是在接触 AI 与 Obsidian 后的尝试与模仿。这是我的第一个开源项目，欢迎提出任何建议和问题。
+本项目源于复习期间总是打开一堆 PDF 课件时总是不小心关掉浏览器，不得不反复翻找课件。其余功能则是在接触 AI 与 Obsidian 后的尝试与模仿。这是我的第一个开源项目，欢迎提出任何建议和问题。
 
 ## 功能特性
 

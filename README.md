@@ -7,7 +7,7 @@
 
 [中文文档](./README.zh-CN.md) · [Knowlink Page (HTML Page Generator)](https://github.com/Wizeeeee/knowlink-skill)
 
-This project started from exam review: while flipping through a pile of PDF courseware, I kept accidentally closing the browser and had to hunt for the files again. The rest of the features grew out of experiments with AI and Obsidian. This is my first open-source project — any suggestions and questions are welcome.
+This project started from exam review while flipping through a pile of PDF courseware, I kept accidentally closing the browser and had to hunt for the files again. The rest of the features grew out of experiments with AI and Obsidian. This is my first open-source project — any suggestions and questions are welcome.
 
 ## Features
 
