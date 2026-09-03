@@ -1,125 +1,131 @@
-# KnowLink 知识星系
+# KnowLink 知识星系 (Knowledge Galaxy)
 
-> Chrome Extension · Manifest V3 · 知识可视化
+> Chrome Extension · Manifest V3 · Knowledge Visualization
 
 ![Version](https://img.shields.io/badge/version-2.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-本项目源于复习期间的一次"手残"：打开一堆 PDF 课件时总是不小心关掉浏览器，不得不反复翻找课件。其余功能则是在接触 AI 与 Obsidian 后的尝试与模仿。这是我的第一个开源项目，欢迎提出任何建议和问题。
+[中文文档](./README.zh-CN.md) · [Knowlink Page (HTML Page Generator)](https://github.com/Wizeeeee/knowlink-skill)
 
-## ✨ 功能特性
+This project started from exam review: while flipping through a pile of PDF courseware, I kept accidentally closing the browser and had to hunt for the files again. The rest of the features grew out of experiments with AI and Obsidian. This is my first open-source project — any suggestions and questions are welcome.
 
-- **知识星系可视化**：将知识点渲染为节点，关联关系渲染为连线，自动聚类为知识簇
-- **PDF 智能分析**：拖入 PDF 自动提取知识点、生成摘要、发现关联（云端 AI 可选）
-- **语义去重**：TF-IDF + 余弦相似度，避免重复知识点入库
-- **AI 分析**：跨知识库发现隐藏关联，一键应用
-- **多视图**：侧边栏（Side Panel）+ 全屏星系（Network）+ PDF 阅读器
-- **自定义 API**：支持任意 OpenAI 兼容的 API 端点
+## Features
 
-## 🚀 快速开始
+- **Knowledge galaxy visualization**: knowledge points rendered as nodes, relations as edges, automatically clustered into knowledge clusters
+- **Smart PDF analysis**: drag in a PDF to auto-extract knowledge points, generate summaries, and discover relations (cloud AI optional)
+- **Semantic deduplication**: TF-IDF + cosine similarity to avoid duplicate knowledge points
+- **AI analysis**: discover hidden relations across knowledge bases, apply with one click
+- **Multiple views**: Side Panel + fullscreen galaxy (Network) + PDF viewer
+- **Custom API**: supports any OpenAI-compatible API endpoint
 
-### 安装（开发者模式）
+## Quick Start
 
-1. 克隆仓库并进入目录：
+### Install (Developer Mode)
+
+1. Clone the repo and enter the directory:
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/Wizeeeee/knowlink-view.git
    cd knowlink-view
    ```
-2. 打开 Chrome，访问 `chrome://extensions/`
-3. 开启右上角 **开发者模式**
-4. 点击 **加载已解压的扩展程序**，选择 `knowlink-view/` 目录
-5. 点击工具栏的扩展图标，侧边栏即打开
+2. Open Chrome and visit `chrome://extensions/`
+3. Enable **Developer mode** (top right)
+4. Click **Load unpacked** and select the `knowlink-view/` directory
+5. Click the extension icon in the toolbar — the side panel opens
 
-### 配置 AI（可选）
+### Configure AI (Optional)
 
-云端 AI 功能（PDF 摘要、关联发现）需要 API Key：
+Cloud AI features (PDF summaries, relation discovery) need an API Key:
 
 ```bash
-# 复制配置模板
+# Copy the config template
 cp js/core/ai-config.example.js js/core/ai-config.js
 ```
 
-编辑 `js/core/ai-config.js`：
+Edit `js/core/ai-config.js`:
 
 ```js
 var DEFAULT_CONFIG = {
-  provider: 'custom',     // 自定义 API
-  apiKey: 'your-api-key-here',  // 👈 填入你的 API Key
-  endpoint: 'https://api.example.com/v1/chat/completions',  // 👈 填入你的 API 端点
-  model: 'your-model-name',     // 👈 填入模型名称
-  enabled: true           // 填入 Key 后改为 true 启用
+  provider: 'custom',     // custom API
+  apiKey: 'your-api-key-here',  // put your API Key here
+  endpoint: 'https://api.example.com/v1/chat/completions',  // your API endpoint
+  model: 'your-model-name',     // your model name
+  enabled: true           // set to true after adding your key
 };
 ```
 
-> ⚠️ `ai-config.js` 已加入 `.gitignore`，**切勿**提交你的 API Key。
+> `ai-config.js` is in `.gitignore` — **never** commit your API Key.
 
-不配置 AI 也能使用核心功能（本地 NLP 引擎负责关键词提取、去重、连线计算）。
+Core features work without AI (the local NLP engine handles keyword extraction, deduplication, and edge computation).
 
-## 📁 项目结构
+## Project Structure
 
 ```
 knowlink-view/
 ├── manifest.json            Chrome Extension Manifest V3
-├── background.js            Service Worker（数据层 + 标签页监听）
-├── content.js               Content Script（页面注入）
-├── sidepanel.html           侧边栏 UI
-├── network.html             全屏星系 UI
-├── pdf-viewer.html          PDF 阅读器 UI
+├── background.js            Service Worker (data layer + tab listeners)
+├── content.js               Content Script (page injection)
+├── sidepanel.html           Side panel UI
+├── network.html             Fullscreen galaxy UI
+├── pdf-viewer.html          PDF viewer UI
 ├── js/
-│   ├── core/                引擎 / 数据层（无 UI 依赖）
-│   │   ├── nlp-engine.js    统一 NLP 引擎（TF-IDF / TextRank / 余弦相似度）
-│   │   ├── cloud-adapter.js 云端 API 适配器（Map-Reduce 摘要 / 重试退避）
-│   │   ├── ai-store.js      AI 结果持久化
-│   │   ├── ai-edges.js      AI 连线 CRUD
-│   │   ├── ai-dedup.js      语义去重（委托 nlp-engine）
-│   │   ├── ai-worker.js     Web Worker（委托 nlp-engine）
-│   │   ├── ai-wormhole.js   AI 分析编排器（PDF 分析 / 关联发现）
-│   │   ├── ai-config.js     AI 配置（gitignore，不入库）
-│   │   ├── kb-store.js      统一知识库数据层（唯一数据源）
-│   │   ├── knowlink-layout.js 图计算与布局引擎
-│   │   ├── knowlink-renderer.js Canvas 2D 渲染管线
-│   │   ├── knowlink-engine.js KnowLinkAI API 瘦 facade
-│   │   ├── i18n.js          国际化
-│   │   └── utils.js         共享工具
-│   └── views/               视图逻辑
-│       ├── sidepanel.js     侧边栏逻辑
-│       ├── network.js       全屏星系逻辑
-│       └── pdf-viewer.js    PDF 阅读器逻辑
-└── lib/                     第三方库（PDF.js）
+│   ├── core/                Engine / data layer (no UI dependencies)
+│   │   ├── nlp-engine.js    Unified NLP engine (TF-IDF / TextRank / cosine similarity)
+│   │   ├── cloud-adapter.js Cloud API adapter (Map-Reduce summarization / retry backoff)
+│   │   ├── ai-store.js      AI result persistence
+│   │   ├── ai-edges.js      AI edge CRUD
+│   │   ├── ai-dedup.js      Semantic dedup (delegates to nlp-engine)
+│   │   ├── ai-worker.js     Web Worker (delegates to nlp-engine)
+│   │   ├── ai-wormhole.js   AI analysis orchestrator (PDF analysis / relation discovery)
+│   │   ├── ai-config.js     AI config (gitignored, not committed)
+│   │   ├── kb-store.js      Unified knowledge base data layer (single source of truth)
+│   │   ├── knowlink-layout.js  Graph computation & layout engine
+│   │   ├── knowlink-renderer.js Canvas 2D rendering pipeline
+│   │   ├── knowlink-engine.js KnowLinkAI API thin facade
+│   │   ├── i18n.js          Internationalization
+│   │   └── utils.js         Shared utilities
+│   └── views/               View logic
+│       ├── sidepanel.js     Side panel logic
+│       ├── network.js       Fullscreen galaxy logic
+│       └── pdf-viewer.js    PDF viewer logic
+└── lib/                     Third-party libraries (PDF.js)
 ```
 
-详细的架构说明（模块依赖图、架构演进）见 [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)。
+Detailed architecture (module dependency graph, evolution) in [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md).
 
-## 🧠 架构设计
+## Architecture
 
-- **分层清晰**：`js/core` 无 UI 依赖，`js/views` 只做视图逻辑
-- **唯一数据源**：所有 `chrome.storage` 访问统一收敛到 `kb-store.js`
-- **NLP 统一**：TF-IDF / TextRank / 去重全部委托 `nlp-engine.js`，消除重复实现
-- **AI 编排**：`ai-wormhole.js` 编排 PDF 分析流程，`cloud-adapter.js` 负责 API 调用
+- **Clean layering**: `js/core` has no UI dependencies; `js/views` only handles view logic
+- **Single source of truth**: all `chrome.storage` access is centralized in `kb-store.js`
+- **Unified NLP**: TF-IDF / TextRank / dedup all delegate to `nlp-engine.js`, eliminating duplicate implementations
+- **AI orchestration**: `ai-wormhole.js` orchestrates the PDF analysis flow; `cloud-adapter.js` handles API calls
 
-## 🛠️ 开发
+## Related Projects
 
-### 环境要求
+- **[Knowlink Page](https://github.com/Wizeeeee/knowlink-skill)** — Knowledge galaxy page generator (CLI + Skill). Turns knowledge-point JSON specs into self-contained interactive HTML pages, sharing the same knowledge-point data model and layout/render engine with this extension.
 
-- Chrome / Edge（支持 Manifest V3 + Side Panel API）
-- 无需构建工具，纯原生 JS
+## Development
 
-### 开发流程
+### Requirements
 
-1. 修改代码后，在 `chrome://extensions/` 点击扩展的 **刷新** 按钮
-2. 打开 DevTools 查看 `[KnowLink BG]` / `[KnowLink]` 前缀日志
-3. 新增 JS 文件时，记得同步更新 `manifest.json` 的 `web_accessible_resources`
+- Chrome / Edge (Manifest V3 + Side Panel API)
+- No build tools — pure vanilla JS
 
-### 代码规范
+### Workflow
 
-- 原生 ES5/ES6 语法（无框架、无构建步骤）
-- 全局命名空间：`self.KBStore` / `window.AIWormhole` / `window.NLP` / `window.AIConfig`
-- 日志前缀：`[KnowLink BG]`（后台）/ `[KnowLink]`（视图）
+1. After editing code, click **Reload** on the extension in `chrome://extensions/`
+2. Open DevTools and look for `[KnowLink BG]` / `[KnowLink]` prefixed logs
+3. When adding a new JS file, remember to update `web_accessible_resources` in `manifest.json`
 
-## 🤝 贡献
+### Code Style
 
-欢迎提交 Issue 和 Pull Request！请先阅读 [CONTRIBUTING.md](../CONTRIBUTING.md)。
+- Vanilla ES5/ES6 (no frameworks, no build step)
+- Global namespaces: `self.KBStore` / `window.AIWormhole` / `window.NLP` / `window.AIConfig`
+- Log prefixes: `[KnowLink BG]` (background) / `[KnowLink]` (views)
 
-## 📄 License
+## Contributing
+
+Issues and Pull Requests are welcome!
+
+## License
 
 [MIT](./LICENSE)
