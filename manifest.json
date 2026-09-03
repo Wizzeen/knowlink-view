@@ -6,8 +6,11 @@
   "permissions": [
     "sidePanel",
     "storage",
+    "activeTab",
+    "scripting",
     "contextMenus",
-    "tabs"
+    "tabs",
+    "history"
   ],
   "host_permissions": [
     "<all_urls>",
