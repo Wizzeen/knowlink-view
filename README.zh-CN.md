@@ -20,7 +20,16 @@
 
 ## 快速开始
 
-### 安装（开发者模式）
+### 安装（方式一：下载 Release 压缩包）
+
+1. 前往 [Releases](https://github.com/Wizeeeee/knowlink-view/releases) 下载最新版 `knowlink-view-<版本>.zip`
+2. 解压到本地任意目录
+3. 打开 Chrome，访问 `chrome://extensions/`
+4. 开启右上角 **开发者模式**
+5. 点击 **加载已解压的扩展程序**，选择解压后的目录
+6. 点击工具栏的扩展图标，侧边栏即打开
+
+### 安装（方式二：开发者模式）
 
 1. 克隆仓库并进入目录：
    ```bash

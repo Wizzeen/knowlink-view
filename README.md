@@ -20,7 +20,16 @@ This project started from exam review while flipping through a pile of PDF cours
 
 ## Quick Start
 
-### Install (Developer Mode)
+### Install (Option 1: Download Release ZIP)
+
+1. Go to [Releases](https://github.com/Wizeeeee/knowlink-view/releases) and download the latest `knowlink-view-<version>.zip`
+2. Unzip it to any local directory
+3. Open Chrome and visit `chrome://extensions/`
+4. Enable **Developer mode** (top right)
+5. Click **Load unpacked** and select the unzipped directory
+6. Click the extension icon in the toolbar — the side panel opens
+
+### Install (Option 2: Developer Mode)
 
 1. Clone the repo and enter the directory:
    ```bash

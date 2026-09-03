@@ -1,6 +1,9 @@
 # AI 配置文件（含 API Key，从 ai-config.example.js 复制）
 js/core/ai-config.js
 
+# 打包产物（scripts/package.ps1 生成）
+dist/
+
 # Node
 node_modules/
 *.log

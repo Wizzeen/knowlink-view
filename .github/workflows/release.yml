@@ -1,0 +1,41 @@
+name: Release
+
+# 触发方式：推送 v 开头的 tag（如 v2.0、v2.1.0）
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Package extension
+        run: |
+          set -e
+          VERSION="${GITHUB_REF_NAME#v}"
+          STAGE="dist/knowlink-view-$VERSION"
+          mkdir -p "$STAGE"
+
+          # 只打包扩展运行所需的文件（排除 .git/.github/README 等）
+          cp -r manifest.json background.js content.js sidepanel.html network.html pdf-viewer.html css js lib LICENSE "$STAGE/"
+
+          # 排除含 API Key 的用户配置文件
+          rm -f "$STAGE/js/core/ai-config.js"
+
+          # 打包为 zip（zip 内直接是扩展文件，解压即可加载）
+          cd dist
+          zip -r "knowlink-view-$VERSION.zip" "knowlink-view-$VERSION"
+          cd ..
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/knowlink-view-*.zip
+          generate_release_notes: true
