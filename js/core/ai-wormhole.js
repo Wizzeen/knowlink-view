@@ -311,6 +311,18 @@
     }
 
     return window.CloudAdapter.findConnections(knowledgePoints, config, threshold, maxEdges)
+      .then(function (edges) {
+        // 与本地路径 _localFindConnections 保持一致：
+        // 将 CloudAdapter 返回的数字索引边映射为知识点 ID，并补充渲染字段
+        var idEdges = window.AIEdges.mapToIds(edges, knowledgePoints);
+        idEdges.forEach(function (e) {
+          e.narrative = '🤖 AI 发现的深层关联';
+          e.visualStrength = e.strength / 100;
+          e.bidirectional = true;
+          e.aiReason = e.reason || 'ai-inferred';
+        });
+        return idEdges;
+      })
       .catch(function (err) {
         console.error('[AIWormhole] 云端关联分析失败:', err.message);
         return [];
