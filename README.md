@@ -18,6 +18,24 @@ This project started from exam review while flipping through a pile of PDF cours
 - **Multiple views**: Side Panel + fullscreen galaxy (Network) + PDF viewer
 - **Custom API**: supports any OpenAI-compatible API endpoint
 
+## Screenshots
+
+**Fullscreen galaxy (Network view)** — knowledge points as stars, relations as edges, auto-clustered into galaxies:
+
+![Network view](docs/screenshots/view-network-main.png)
+
+**AI wormhole drawer** — relation discovery suggestions with a relevance threshold slider:
+
+![Wormhole drawer](docs/screenshots/view-network-wormhole.png)
+
+**Side panel** — knowledge base list, search, PDF analysis:
+
+![Side panel](docs/screenshots/view-sidepanel.png)
+
+**PDF viewer** — opens PDFs via Chrome's native reader:
+
+![PDF viewer](docs/screenshots/view-pdf-viewer.png)
+
 ## Quick Start
 
 ### Install (Option 1: Download Release ZIP)

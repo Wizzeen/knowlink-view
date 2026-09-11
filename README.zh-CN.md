@@ -18,6 +18,24 @@
 - **多视图**：侧边栏（Side Panel）+ 全屏星系（Network）+ PDF 阅读器
 - **自定义 API**：支持任意 OpenAI 兼容的 API 端点
 
+## 效果展示
+
+**全屏星系（Network 视图）** — 知识点渲染为恒星，关联渲染为连线，自动聚类为知识簇：
+
+![Network 视图](docs/screenshots/view-network-main.png)
+
+**AI 虫洞抽屉** — 关联发现建议 + 相关性阈值滑块：
+
+![虫洞抽屉](docs/screenshots/view-network-wormhole.png)
+
+**侧边栏（Side Panel）** — 知识库列表、搜索、PDF 分析：
+
+![侧边栏](docs/screenshots/view-sidepanel.png)
+
+**PDF 阅读器** — 通过 Chrome 原生阅读器打开 PDF：
+
+![PDF 阅读器](docs/screenshots/view-pdf-viewer.png)
+
 ## 快速开始
 
 ### 安装（方式一：下载 Release 压缩包）
